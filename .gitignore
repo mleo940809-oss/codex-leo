@@ -4,6 +4,9 @@ render_current/
 # Python cache
 __pycache__/
 *.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
 
 # Windows metadata
 Thumbs.db
@@ -13,4 +16,11 @@ Desktop.ini
 *.log
 *.tmp
 *.temp
+*.bak
+*.orig
+*.rej
 *.swp
+~$*
+
+# Common local cruft
+.DS_Store

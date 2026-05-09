@@ -1,0 +1,17 @@
+# Normalize text files to LF so reviews stay stable across Windows/macOS/Linux.
+* text=auto eol=lf
+
+# Office documents are treated as binary artifacts.
+*.docx binary
+*.pptx binary
+*.xlsx binary
+*.pdf binary
+
+# Keep common markdown and script files consistently normalized.
+*.md text eol=lf
+*.py text eol=lf
+*.ps1 text eol=lf
+*.json text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
