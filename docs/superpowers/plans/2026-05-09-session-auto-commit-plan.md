@@ -10,6 +10,8 @@
 
 **Governance:** 会话自动提交不能替代会话记忆沉淀。跨会话、长任务或压缩风险场景，必须先按会话记忆规则写入可回读记录并更新索引，再进入 Git 提交候选。
 
+**Policy Position:** 本计划是辅助性的仓库执行规范，不高于会话记忆强制执行规则。凡涉及跨会话延续、决策型问题或压缩风险，必须先完成会话记忆沉淀，再允许进入自动提交候选。
+
 ---
 
 ## 方案对比
@@ -67,6 +69,7 @@
 - Create: `docs/会话自动提交规范.md`
 - Modify: `docs/文档仓库提交规范.md`
 - Modify: `docs/工作产出物管理规则.md`
+- Modify: `AGENTS.md`
 - Modify: `docs/会话记忆强制执行规则.md`
 
 - [ ] **Step 1: Define what counts as a commit-worthy session outcome**
@@ -95,6 +98,10 @@
 - [ ] **Step 4: Define the session memory gate**
 
 跨会话、长任务、决策型问题或明显压缩风险场景下，必须先用会话记忆规则沉淀会话记录并更新索引，Git 提交不能替代会话记录。
+
+- [ ] **Step 5: Add the top-level entry point**
+
+在 `AGENTS.md` 和会话记忆规则中补入会话自动提交的入口说明，明确它属于辅助执行规范，且优先级低于会话记忆沉淀规则。
 
 ---
 
@@ -201,6 +208,7 @@
 ### Task 5: Integrate with existing governance docs
 
 **Files:**
+- Modify: `AGENTS.md`
 - Modify: `docs/文档仓库提交规范.md`
 - Modify: `docs/产品需求管理流程规范.md`
 - Modify: `docs/工作产出物管理规则.md`
@@ -213,6 +221,10 @@
 - [ ] **Step 1b: Add the session memory precedence note**
 
 明确会话记忆沉淀优先于 Git 提交；当需要跨会话延续或压缩前保留时，先完成会话记录，再进入自动提交候选。
+
+- [ ] **Step 1c: Add the AGENTS entry**
+
+在 `AGENTS.md` 中加入一条简短入口说明，指向会话自动提交规范和会话记忆强制执行规则，避免新规则只存在于单独文档里。
 
 - [ ] **Step 2: Align release and snapshot language**
 
