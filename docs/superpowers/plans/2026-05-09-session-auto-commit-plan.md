@@ -8,6 +8,8 @@
 
 **Tech Stack:** Git、PowerShell、Markdown、现有文档规范体系、`docs/versions/` 快照目录。
 
+**Governance:** 会话自动提交不能替代会话记忆沉淀。跨会话、长任务或压缩风险场景，必须先按会话记忆规则写入可回读记录并更新索引，再进入 Git 提交候选。
+
 ---
 
 ## 方案对比
@@ -53,6 +55,10 @@
 结论：
 - 推荐采用。本计划的最终方案。
 
+### 治理约束
+
+本计划只在现有工作分支内执行自动提交，不负责替代分支创建。若当前会话还没有工作分支，应先创建或切换到合适的工作分支，再进入自动提交流程。
+
 ---
 
 ### Task 1: 定义会话提交边界
@@ -61,6 +67,7 @@
 - Create: `docs/会话自动提交规范.md`
 - Modify: `docs/文档仓库提交规范.md`
 - Modify: `docs/工作产出物管理规则.md`
+- Modify: `docs/会话记忆强制执行规则.md`
 
 - [ ] **Step 1: Define what counts as a commit-worthy session outcome**
 
@@ -84,6 +91,10 @@
 - [ ] **Step 3: Define the session checkpoint rule**
 
 把提交触发点定义为“阶段门完成”，不是“会话结束”或“每次保存”。
+
+- [ ] **Step 4: Define the session memory gate**
+
+跨会话、长任务、决策型问题或明显压缩风险场景下，必须先用会话记忆规则沉淀会话记录并更新索引，Git 提交不能替代会话记录。
 
 ---
 
@@ -138,6 +149,7 @@
 
 自动提交顺序固定为：
 
+0. 确认当前处于合适的工作分支；如未在分支上，先创建或切换到工作分支
 1. 判断是否达到正式产物门槛
 2. 生成或校验快照
 3. 校验正文与快照一致性
@@ -192,10 +204,15 @@
 - Modify: `docs/文档仓库提交规范.md`
 - Modify: `docs/产品需求管理流程规范.md`
 - Modify: `docs/工作产出物管理规则.md`
+- Modify: `docs/会话记忆强制执行规则.md`
 
 - [ ] **Step 1: Add a reference to the new session submission rule**
 
 在现有规范中补一条“会话自动提交”入口说明，让团队知道正式产物完成后会走自动提交规则。
+
+- [ ] **Step 1b: Add the session memory precedence note**
+
+明确会话记忆沉淀优先于 Git 提交；当需要跨会话延续或压缩前保留时，先完成会话记录，再进入自动提交候选。
 
 - [ ] **Step 2: Align release and snapshot language**
 
@@ -206,6 +223,10 @@
 验证一条完整链路是否成立：
 
 会话完成 -> 正式产物确认 -> 快照生成 -> Git 提交 -> 正式发布/标签 -> 历史留存
+
+- [ ] **Step 4: Add the branch gate to the sequence**
+
+确保自动提交链路包含“工作分支存在”这一前置条件，不在 `main` 上直接做自动提交。
 
 ---
 
@@ -224,4 +245,3 @@
 - 如果不先定义正式产物边界，自动提交会变成“自动乱提交”
 - 如果不绑定快照，Git 历史和文档版本会脱节
 - 如果不设置失败回退，自动化会在最需要稳的时候失控
-
