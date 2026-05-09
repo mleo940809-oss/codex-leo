@@ -228,6 +228,8 @@ render_current/
 
 - Markdown 快照进入 `docs/versions/<文档名>/`
 - 正式交付 `.docx` 进入 `docs/docx/<文档名>/`
+- 正式原型绑定记录进入 `docs/prototype/<文档名>/binding.md`
+- 正式原型归档记录进入 `docs/prototype/<文档名>/archive/<文档名>_v<版本号>_<YYYYMMDD>/`
 - 两者通过绑定记录保持一一对应
 
 也就是说，`.docx` 不进 Markdown 快照目录，但必须进入自己的正式交付目录。
@@ -248,6 +250,10 @@ render_current/
 - `docs/docx/<文档名>/binding.md`
 
 正式归档说明文件可以保留一份摘要或镜像说明，但不作为唯一正式载体。
+
+正式原型如属于 PRD、高保真原型或交付包，也应形成对应的原型绑定记录，固定路径为 `docs/prototype/<文档名>/binding.md`。该记录与 `.docx` 的绑定记录相互独立，但都必须和对应 PRD 冻结版本同轮留档。
+
+正式原型冻结后还应补充归档层，用于留存冻结时的预览证据、导出文件和归档清单。归档层与 `binding.md` 相互独立，但必须同轮留档、同轮可追溯，且后续新版本不得覆盖旧归档。
 
 ### 6.8 Git 同步要求
 
