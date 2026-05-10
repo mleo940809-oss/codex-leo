@@ -1,0 +1,7 @@
+interface:
+  display_name: "PRD Workflow Governance"
+  short_description: "PRD stage selection, review gates, freeze, and delivery traceability"
+  default_prompt: "Use $prd-workflow-governance to review a PRD workflow for stage selection, freeze gates, prototype binding, and delivery traceability."
+
+policy:
+  allow_implicit_invocation: true
