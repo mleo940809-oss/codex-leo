@@ -101,55 +101,14 @@ Weixin摇一摇用于承载商品券活动的创建、审阅、展示和批次�
 - 活动详情页为只读快照，不承载编辑和发放动作
 
 ### 4.4 应用架构
-
-```mermaid
-flowchart LR
-  A[活动列表页] --> B[活动新增页]
-  A --> C[活动详情页]
-  A --> D[活动编辑页]
-  A --> E[活动修改页]
-  A --> F[批次管理页]
-  B --> C
-  D --> C
-  E --> C
-  F --> C
-
-  subgraph Backend["后台能力"]
-    S1[活动服务]
-    S2[批次服务]
-    S3[Code 上传/校验]
-    S4[门店关联]
-    S5[通知配置]
-  end
-
-  F --> S2
-  F --> S3
-  F --> S4
-  B --> S1
-  D --> S1
-  E --> S1
-  C --> S1
-```
+| 图文件 | 可编辑源文件 | 图示说明 |
+|---|---|---|
+| [Weixin摇一摇_应用架构图_v1.4_20260510.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_应用架构图_v1.4_20260510.png) | [Weixin摇一摇_应用架构图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_应用架构图.drawio) | 前台页面层、业务能力层、数据与留痕层；明确活动状态主源、批次状态主源、页面路由、业务调用、数据流向和留痕归档 |
 
 ### 4.5 功能架构
-
-```mermaid
-mindmap
-  root((Weixin摇一摇))
-    活动管理
-      活动列表
-      活动新增
-      活动编辑
-      活动修改
-      活动详情
-    批次管理
-      批次列表
-      预配置
-      Code上传
-      门店关联
-      发放控制
-      状态管理
-```
+| 图文件 | 可编辑源文件 | 图示说明 |
+|---|---|---|
+| [Weixin摇一摇_功能架构图_v1.4_20260510.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_功能架构图_v1.4_20260510.png) | [Weixin摇一摇_功能架构图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_功能架构图.drawio) | 根节点为 Weixin摇一摇；一级分支为活动管理与批次管理；活动管理覆盖活动列表/新增/编辑/修改/详情，批次管理覆盖批次列表/预配置/Code 上传校验/门店关联/发放控制/批次状态管理 / 发放状态管理 |
 
 ### 4.6 名词解释
 

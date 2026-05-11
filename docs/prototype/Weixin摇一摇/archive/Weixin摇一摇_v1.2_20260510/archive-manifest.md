@@ -8,7 +8,7 @@
 
 | 项目 | 内容 |
 |---|---|
-| 对应 PRD | `docs/versions/Weixin摇一摇/Weixin摇一摇_PRD_v1.2_20260510.md` |
+| 对应 PRD | `docs/versions/Weixin摇一摇/历史版本/PRD/Weixin摇一摇_PRD_v1.2_20260510.md` |
 | 对应绑定记录 | `docs/prototype/Weixin摇一摇/binding.md` |
 | 归档责任人 | 待签核 |
 | 归档确认时间 | 待签核 |
