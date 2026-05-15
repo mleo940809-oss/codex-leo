@@ -1,0 +1,3123 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weixin 摇一摇高保真原型 v2.20</title>
+  <style>
+    :root{
+      --bg: #f2efe8;
+      --bg-2: #e9e1d2;
+      --panel: rgba(255,255,255,.78);
+      --panel-2: rgba(246,241,231,.92);
+      --line: rgba(36,36,36,.12);
+      --text: #1c1b1a;
+      --muted: #6e675f;
+      --brand: #123a4a;
+      --brand-2: #356b79;
+      --accent: #d76b36;
+      --accent-2: #a6441d;
+      --good: #1f7a57;
+      --warn: #b06a10;
+      --danger: #b13c39;
+      --shadow: 0 22px 60px rgba(31, 29, 24, .12);
+      --shadow-soft: 0 12px 28px rgba(31, 29, 24, .08);
+      --radius: 22px;
+      --radius-sm: 14px;
+      --font-body: "PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+      --font-display: "Baskerville","Iowan Old Style","Songti SC","STSong","Times New Roman",serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(circle at 20% 10%, rgba(214, 181, 119, .22), transparent 32%),
+        radial-gradient(circle at 85% 15%, rgba(53, 107, 121, .18), transparent 28%),
+        radial-gradient(circle at 75% 85%, rgba(215, 107, 54, .14), transparent 26%),
+        linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+      overflow-x: hidden;
+    }
+    body::before{
+      content:"";
+      position: fixed;
+      inset: 0;
+      pointer-events:none;
+      background:
+        linear-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.055) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: linear-gradient(180deg, rgba(0,0,0,.42), rgba(0,0,0,.06));
+      opacity: .38;
+    }
+    .app{
+      width: min(1600px, calc(100vw - 28px));
+      margin: 14px auto 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .shell{
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 18px;
+      min-height: calc(100vh - 38px);
+    }
+    .sidebar, .workspace, .card, .modal-panel, .toast, .topbar, .nav-chip {
+      backdrop-filter: blur(16px);
+    }
+    .sidebar{
+      background: linear-gradient(180deg, rgba(20, 44, 55, .94), rgba(18, 39, 49, .92));
+      color: #f8f3ea;
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 30px;
+      padding: 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: sticky;
+      top: 14px;
+      align-self: start;
+      overflow: hidden;
+    }
+    .sidebar::after{
+      content:"";
+      position:absolute;
+      inset:auto -40px -80px auto;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(215,107,54,.36), transparent 65%);
+      filter: blur(10px);
+      pointer-events:none;
+    }
+    .brand{
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .brand-badge{
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,.18), rgba(255,255,255,.06));
+      border: 1px solid rgba(255,255,255,.16);
+      display:grid;
+      place-items:center;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.12);
+    }
+    .brand-title{
+      font-family: var(--font-display);
+      font-size: 27px;
+      line-height: 1.1;
+      letter-spacing: .02em;
+      margin: 0;
+    }
+    .brand-sub{
+      color: rgba(248,243,234,.76);
+      font-size: 12px;
+      line-height: 1.7;
+      margin: 0;
+    }
+    .side-meta{
+      position: relative;
+      z-index: 1;
+      display: grid;
+      gap: 12px;
+    }
+    .meta-card{
+      border-radius: 18px;
+      padding: 14px 14px 12px;
+      background: rgba(255,255,255,.07);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .meta-card .k{
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: rgba(248,243,234,.62);
+      margin-bottom: 8px;
+    }
+    .meta-card .v{
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .nav-list{
+      display: grid;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    .nav-item{
+      border: 0;
+      color: inherit;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding: 13px 14px;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: transform .18s ease, background .18s ease, border-color .18s ease;
+    }
+    .nav-item:hover{ transform: translateX(2px); background: rgba(255,255,255,.09); }
+    .nav-item.active{
+      background: linear-gradient(135deg, rgba(215,107,54,.9), rgba(180,70,34,.92));
+      border-color: rgba(255,255,255,.22);
+      box-shadow: 0 10px 24px rgba(180,70,34,.25);
+    }
+    .nav-item .name{ font-weight: 700; }
+    .nav-item .hint{ font-size: 12px; color: rgba(248,243,234,.72); }
+    .workspace{
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .topbar{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow-soft);
+      padding: 18px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 14px;
+      z-index: 2;
+    }
+    .crumbs{
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .crumbs strong{
+      color: var(--text);
+      font-weight: 700;
+    }
+    .view-title{
+      display:flex;
+      flex-direction:column;
+      gap: 5px;
+    }
+    .view-title h1{
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 26px;
+      line-height: 1.08;
+      letter-spacing: .01em;
+    }
+    .view-title p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .toolbar{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      justify-content:flex-end;
+      align-items:center;
+    }
+    .btn, .mini-btn, .seg-btn, .nav-chip, .pill, .tab-btn, .action-card{
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn, .mini-btn, .seg-btn, .tab-btn, .nav-chip{
+      border: 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .btn{
+      min-height: 42px;
+      border-radius: 14px;
+      padding: 0 16px;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--text);
+      background: linear-gradient(180deg, #fff, #f1eadf);
+      border: 1px solid rgba(36,36,36,.1);
+      box-shadow: 0 9px 18px rgba(31,29,24,.08);
+      transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+    }
+    .btn:hover, .mini-btn:hover, .seg-btn:hover, .tab-btn:hover, .nav-chip:hover{ transform: translateY(-1px); }
+    .btn.primary{
+      color:#fff;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      border-color: rgba(255,255,255,.12);
+    }
+    .btn.accent{
+      color:#fff;
+      background: linear-gradient(135deg, var(--accent), #b54b24);
+    }
+    .btn.green{ color:#fff; background: linear-gradient(135deg, #188160, #1d5e4e); }
+    .btn.red{ color:#fff; background: linear-gradient(135deg, #b7433b, #92322f); }
+    .btn.ghost{
+      background: rgba(255,255,255,.5);
+      box-shadow: none;
+    }
+    .btn:disabled, .mini-btn:disabled, .seg-btn:disabled, .tab-btn:disabled{
+      opacity: .42;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .mini-btn{
+      min-height: 32px;
+      padding: 0 11px;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+      background: rgba(255,255,255,.82);
+      border: 1px solid rgba(36,36,36,.12);
+    }
+    .mini-btn.primary{ color:#fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
+    .mini-btn.blue{ color:#fff; background: linear-gradient(135deg, #2b6cb0, #24508b); }
+    .mini-btn.green{ color:#fff; background: linear-gradient(135deg, #1a7d5b, #18634e); }
+    .mini-btn.red{ color:#fff; background: linear-gradient(135deg, #b7433b, #9b322f); }
+    .nav-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      min-height: 34px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.72);
+      border: 1px solid rgba(36,36,36,.12);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .nav-chip.active{
+      color: #fff;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+    .nav-chip.warn{
+      color: #7a4307;
+      background: rgba(255, 206, 146, .54);
+      border-color: rgba(181, 122, 35, .14);
+    }
+    .nav-chip.good{
+      color: #0f5f45;
+      background: rgba(157, 231, 198, .54);
+      border-color: rgba(31, 122, 87, .15);
+    }
+    .grid{
+      display:grid;
+      gap: 16px;
+    }
+    .grid.two{ grid-template-columns: 1.3fr .95fr; }
+    .grid.three{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .stack{ display:grid; gap: 14px; }
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+      overflow: hidden;
+    }
+    .card-hd{
+      padding: 18px 20px 0;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap: 14px;
+    }
+    .card-hd h2, .section-title h3, .panel-title h4{
+      margin: 0;
+      font-family: var(--font-display);
+      letter-spacing: .01em;
+    }
+    .card-hd h2{ font-size: 22px; }
+    .card-hd p{
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+      max-width: 82ch;
+    }
+    .card-bd{ padding: 18px 20px 20px; }
+    .section{
+      background: var(--panel-2);
+      border: 1px solid rgba(36,36,36,.08);
+      border-radius: 22px;
+      padding: 16px;
+    }
+    .section-title{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .section-title p{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255,255,255,.74);
+      border: 1px solid rgba(36,36,36,.12);
+      color: var(--text);
+    }
+    .chip strong{ font-weight: 800; }
+    .chip.brand{ background: rgba(18,58,74,.08); color: var(--brand); }
+    .chip.good{ background: rgba(31,122,87,.1); color: var(--good); }
+    .chip.warn{ background: rgba(176,106,16,.12); color: var(--warn); }
+    .chip.bad{ background: rgba(177,60,57,.11); color: var(--danger); }
+    .chip.soft{ background: rgba(255,255,255,.58); }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .pill.hot{ color:#8a4d14; background: rgba(223, 178, 93, .17); }
+    .pill.dim{ color:#5d625f; background: rgba(92, 100, 96, .12); }
+    .status-tag{
+      display:inline-flex;
+      align-items:center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .status-tag::before{
+      content:"";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: currentColor;
+      opacity: .9;
+    }
+    .status-draft{ color:#8b5a14; background: rgba(231, 176, 70, .16); }
+    .status-auditing{ color:#546a90; background: rgba(110, 143, 204, .14); }
+    .status-effective{ color:#0f6e58; background: rgba(40, 174, 129, .12); }
+    .status-deactivated{ color:#8b3e3a; background: rgba(184, 88, 81, .14); }
+    .status-sending{ color:#0f6e58; background: rgba(40, 174, 129, .12); }
+    .status-paused{ color:#855e10; background: rgba(226, 188, 76, .14); }
+    .status-stopped{ color:#8b3e3a; background: rgba(184, 88, 81, .14); }
+    .status-ready{ color:#56623a; background: rgba(148, 184, 85, .14); }
+    .status-other{ color:#49545c; background: rgba(120, 130, 140, .12); }
+    .filter-grid{
+      display:grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .field{
+      display:grid;
+      gap: 8px;
+      min-width: 0;
+    }
+    .field.span-12{ grid-column: span 12; }
+    .field.span-6{ grid-column: span 6; }
+    .field.span-4{ grid-column: span 4; }
+    .field.span-3{ grid-column: span 3; }
+    .field.span-2{ grid-column: span 2; }
+    .field label{
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      color: var(--text);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:baseline;
+    }
+    .field label .hint{
+      color: var(--muted);
+      font-weight: 600;
+      font-size: 12px;
+    }
+    input, select, textarea{
+      width: 100%;
+      min-width: 0;
+      border-radius: 14px;
+      border: 1px solid rgba(36,36,36,.12);
+      background: rgba(255,255,255,.82);
+      color: var(--text);
+      padding: 12px 13px;
+      font: inherit;
+      outline: none;
+      transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+    textarea{ min-height: 110px; resize: vertical; line-height: 1.65; }
+    input:focus, select:focus, textarea:focus{
+      border-color: rgba(53,107,121,.6);
+      box-shadow: 0 0 0 4px rgba(53,107,121,.12);
+      background: #fff;
+    }
+    input[readonly]{
+      background: rgba(245,241,233,.92);
+      color: #685f54;
+    }
+    .error-text{
+      min-height: 16px;
+      color: var(--danger);
+      font-size: 11px;
+      line-height: 1.4;
+    }
+    .hint-box{
+      border-radius: 18px;
+      padding: 14px 16px;
+      border: 1px solid rgba(36,36,36,.10);
+      background: rgba(255,255,255,.72);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+    .hint-box.info{ background: rgba(53,107,121,.08); border-color: rgba(53,107,121,.14); }
+    .hint-box.success{ background: rgba(31,122,87,.1); border-color: rgba(31,122,87,.14); }
+    .hint-box.warn{ background: rgba(176,106,16,.1); border-color: rgba(176,106,16,.18); }
+    .hint-box.danger{ background: rgba(177,60,57,.09); border-color: rgba(177,60,57,.16); }
+    .table-wrap{
+      overflow:auto;
+      border-radius: 18px;
+      border: 1px solid rgba(36,36,36,.08);
+      background: rgba(255,255,255,.6);
+    }
+    table{
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1400px;
+    }
+    thead th{
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: rgba(248,244,236,.96);
+      text-align: left;
+      font-size: 12px;
+      letter-spacing: .03em;
+      color: #50493f;
+      padding: 13px 12px;
+      border-bottom: 1px solid rgba(36,36,36,.08);
+      white-space: nowrap;
+    }
+    tbody td{
+      padding: 12px;
+      border-bottom: 1px solid rgba(36,36,36,.06);
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    tbody tr:hover{ background: rgba(255,255,255,.4); }
+    .row-actions{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .empty{
+      padding: 26px 16px;
+      text-align:center;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .detail-grid{
+      display:grid;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .kv{
+      grid-column: span 3;
+      padding: 14px 15px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.74);
+      border: 1px solid rgba(36,36,36,.08);
+    }
+    .kv .k{
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .kv .v{
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 700;
+      color: var(--text);
+      word-break: break-word;
+    }
+    .preview-grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .art{
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      min-height: 156px;
+      border: 1px solid rgba(36,36,36,.08);
+      background: linear-gradient(135deg, rgba(18,58,74,.08), rgba(215,107,54,.1));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.16);
+    }
+    .art img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display:block;
+    }
+    .art .label{
+      position:absolute;
+      left: 10px;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(18, 24, 28, .72);
+      color: #fff;
+      border-radius: 12px;
+      padding: 8px 10px;
+      font-size: 11px;
+      line-height: 1.45;
+    }
+    .form-grid{ display:grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 12px; }
+    .form-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 10px;
+      justify-content:flex-end;
+      margin-top: 16px;
+    }
+    .page{
+      display:none;
+      animation: fadeUp .24s ease both;
+    }
+    .page.active{ display:block; }
+    @keyframes fadeUp{
+      from{ opacity: 0; transform: translateY(8px); }
+      to{ opacity: 1; transform: translateY(0); }
+    }
+    .page-stack{ display:grid; gap: 16px; }
+    .type-picker{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .type-card{
+      border-radius: 20px;
+      padding: 16px;
+      border: 1px solid rgba(36,36,36,.1);
+      background: rgba(255,255,255,.76);
+      cursor: pointer;
+      text-align:left;
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+      min-height: 150px;
+      display:flex;
+      flex-direction:column;
+      gap: 10px;
+      justify-content:space-between;
+    }
+    .type-card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-soft); }
+    .type-card.active{
+      border-color: rgba(18,58,74,.34);
+      background: linear-gradient(180deg, rgba(18,58,74,.06), rgba(255,255,255,.88));
+      box-shadow: 0 0 0 4px rgba(18,58,74,.08);
+    }
+    .type-card h4{
+      margin: 0;
+      font-size: 18px;
+      font-family: var(--font-display);
+    }
+    .type-card p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.65;
+    }
+    .type-card .mark{
+      display:inline-flex;
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      color: #fff;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    }
+    .type-card.exchange .mark{ background: linear-gradient(135deg, var(--accent), var(--accent-2)); }
+    .subtabs{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .tab-btn{
+      min-height: 36px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.78);
+      border: 1px solid rgba(36,36,36,.12);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .tab-btn.active{
+      color:#fff;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      border-color: transparent;
+    }
+    .split-2{
+      display:grid;
+      grid-template-columns: 1.08fr .92fr;
+      gap: 14px;
+    }
+    .panel{
+      border: 1px solid rgba(36,36,36,.08);
+      border-radius: 20px;
+      background: rgba(255,255,255,.74);
+      padding: 14px;
+    }
+    .panel-title{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .panel-title h4{ font-size: 17px; }
+    .panel-title p{
+      margin: 6px 0 0;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .combo-list{
+      display:grid;
+      gap: 10px;
+    }
+    .combo-item{
+      border: 1px solid rgba(36,36,36,.08);
+      border-radius: 16px;
+      background: rgba(255,255,255,.8);
+      padding: 12px;
+      display:grid;
+      gap: 10px;
+    }
+    .combo-head{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:center;
+    }
+    .combo-head strong{ font-size: 13px; }
+    .combo-products{
+      display:grid;
+      gap: 8px;
+    }
+    .product-line{
+      display:grid;
+      grid-template-columns: 1.1fr .45fr .45fr .7fr .8fr auto;
+      gap: 8px;
+      align-items:center;
+    }
+    .inline-actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      align-items:center;
+    }
+    .batch-wrap{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+    }
+    .batch-summary{
+      display:grid;
+      gap: 12px;
+    }
+    .batch-stat{
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,.74);
+      border: 1px solid rgba(36,36,36,.08);
+    }
+    .batch-stat .k{
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .batch-stat .v{
+      font-size: 22px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      line-height: 1.15;
+    }
+    .batch-stat .s{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-top: 8px;
+    }
+    .status-bar{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+      align-items:center;
+    }
+    .muted{ color: var(--muted); }
+    .small{ font-size: 12px; color: var(--muted); }
+    .modal{
+      position: fixed;
+      inset: 0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(14,16,18,.48);
+      z-index: 20;
+      padding: 20px;
+    }
+    .modal.open{ display:flex; }
+    .modal-panel{
+      width: min(720px, calc(100vw - 28px));
+      border-radius: 28px;
+      background: rgba(255,251,245,.94);
+      border: 1px solid rgba(255,255,255,.16);
+      box-shadow: 0 30px 120px rgba(8, 10, 12, .32);
+      overflow: hidden;
+    }
+    .modal-hd{
+      padding: 18px 20px 0;
+      display:flex;
+      justify-content:space-between;
+      gap: 12px;
+      align-items:flex-start;
+    }
+    .modal-hd h3{
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 22px;
+    }
+    .modal-hd p{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .modal-bd{ padding: 16px 20px 20px; }
+    .modal-actions{
+      display:flex;
+      justify-content:flex-end;
+      gap: 10px;
+      flex-wrap:wrap;
+      padding: 0 20px 20px;
+    }
+    .toast-wrap{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      display: grid;
+      gap: 10px;
+      z-index: 30;
+      pointer-events:none;
+    }
+    .toast{
+      pointer-events:none;
+      min-width: 260px;
+      max-width: 420px;
+      background: rgba(18,39,49,.94);
+      color:#fff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 16px 38px rgba(18, 39, 49, .22);
+      border: 1px solid rgba(255,255,255,.1);
+      animation: toastIn .28s ease both;
+    }
+    .toast .title{ font-weight: 800; margin-bottom: 5px; }
+    .toast .msg{ font-size: 13px; line-height: 1.55; color: rgba(255,255,255,.86); }
+    @keyframes toastIn{
+      from{ opacity: 0; transform: translateY(8px); }
+      to{ opacity: 1; transform: translateY(0); }
+    }
+    .timeline{
+      display:grid;
+      gap: 10px;
+      padding-left: 6px;
+    }
+    .timeline-item{
+      display:grid;
+      grid-template-columns: 16px 1fr;
+      gap: 10px;
+      align-items:start;
+    }
+    .timeline-item::before{
+      content:"";
+      width: 12px;
+      height: 12px;
+      margin-top: 4px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      box-shadow: 0 0 0 4px rgba(18,58,74,.09);
+    }
+    .timeline-card{
+      background: rgba(255,255,255,.76);
+      border: 1px solid rgba(36,36,36,.08);
+      border-radius: 14px;
+      padding: 10px 12px;
+    }
+    .timeline-card .meta{ font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .timeline-card .txt{ font-size: 13px; line-height: 1.5; }
+    .section-gap{ height: 2px; }
+    .preview-shell{
+      border-radius: 20px;
+      overflow:hidden;
+      border: 1px solid rgba(36,36,36,.08);
+      background: linear-gradient(180deg, rgba(18,58,74,.06), rgba(215,107,54,.04));
+      min-height: 210px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:flex-start;
+      position: relative;
+    }
+    .preview-shell .cover{
+      position:absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: saturate(1.02);
+    }
+    .preview-shell .label{
+      position:relative;
+      z-index: 1;
+      margin: 16px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(12, 16, 18, .72);
+      color: #fff;
+      max-width: 78%;
+    }
+    .preview-shell .label h4{
+      margin: 0 0 6px;
+      font-family: var(--font-display);
+      font-size: 20px;
+    }
+    .preview-shell .label p{
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(255,255,255,.84);
+    }
+    .check-list{
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+    .subheader-row{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .badge-stack{
+      display:flex;
+      flex-wrap:wrap;
+      gap: 8px;
+    }
+    .legal-note{
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    @media (max-width: 1280px){
+      .shell{ grid-template-columns: 1fr; }
+      .sidebar{ position: relative; top: 0; }
+      .grid.two, .split-2, .batch-wrap{ grid-template-columns: 1fr; }
+      .kv{ grid-column: span 6; }
+    }
+    @media (max-width: 860px){
+      .app{ width: calc(100vw - 16px); margin-top: 8px; }
+      .topbar{ position: relative; top: 0; flex-direction: column; align-items:flex-start; }
+      .toolbar{ justify-content:flex-start; }
+      .filter-grid, .form-grid, .detail-grid{ grid-template-columns: 1fr; }
+      .field.span-12, .field.span-6, .field.span-4, .field.span-3, .field.span-2, .kv{ grid-column: 1 / -1; }
+      .preview-grid, .type-picker{ grid-template-columns: 1fr; }
+      table{ min-width: 1060px; }
+      .product-line{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app"></div>
+
+  <div class="modal" id="modal"></div>
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <script>
+    const clone = (v) => JSON.parse(JSON.stringify(v));
+    const now = () => new Date();
+    const fmtDate = (v) => v ? String(v) : '—';
+    const fmtMoney = (n) => Number(n || 0).toLocaleString('zh-CN', { style: 'currency', currency: 'CNY' });
+    const uid = (p) => `${p}${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+    const esc = (s = '') => String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    const typeLabel = {
+      discount: '满减券',
+      exchange: '兑换券'
+    };
+    const statusLabel = {
+      DRAFT: '草稿',
+      AUDITING: '审批中',
+      EFFECTIVE: '生效中',
+      DEACTIVATED: '已失效',
+      READY: '待提交审核',
+      SENDING: '发放中',
+      PAUSED: '已暂停',
+      STOPPED: '已结束',
+    };
+    const statusClass = (s) => {
+      const map = {
+        DRAFT: 'status-draft',
+        AUDITING: 'status-auditing',
+        EFFECTIVE: 'status-effective',
+        DEACTIVATED: 'status-deactivated',
+        READY: 'status-ready',
+        SENDING: 'status-sending',
+        PAUSED: 'status-paused',
+        STOPPED: 'status-stopped',
+      };
+      return map[s] || 'status-other';
+    };
+    const batchState = (s) => {
+      const map = {
+        READY: '待提交审核',
+        AUDITING: '审核中',
+        SENDING: '发放中',
+        PAUSED: '已暂停',
+        STOPPED: '已结束',
+        DEACTIVATED: '已失效',
+      };
+      return map[s] || s;
+    };
+    const batchStateClass = (s) => {
+      const map = {
+        READY: 'status-ready',
+        AUDITING: 'status-auditing',
+        SENDING: 'status-sending',
+        PAUSED: 'status-paused',
+        STOPPED: 'status-stopped',
+        DEACTIVATED: 'status-deactivated',
+      };
+      return map[s] || 'status-other';
+    };
+
+    function svgArt(title, subtitle, palette){
+      const [a, b, c] = palette;
+      const svg = `
+        <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0%" stop-color="${a}"/>
+              <stop offset="55%" stop-color="${b}"/>
+              <stop offset="100%" stop-color="${c}"/>
+            </linearGradient>
+            <radialGradient id="r" cx="70%" cy="18%" r="72%">
+              <stop offset="0%" stop-color="rgba(255,255,255,.34)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+            </radialGradient>
+          </defs>
+          <rect width="1200" height="800" fill="url(#g)"/>
+          <circle cx="180" cy="190" r="148" fill="rgba(255,255,255,.1)"/>
+          <circle cx="1040" cy="126" r="190" fill="rgba(255,255,255,.08)"/>
+          <circle cx="930" cy="600" r="220" fill="rgba(255,255,255,.06)"/>
+          <path d="M0 585C160 520 286 522 424 579C566 642 673 678 862 635C1015 601 1102 550 1200 523V800H0Z" fill="rgba(255,255,255,.09)"/>
+          <rect x="72" y="70" width="428" height="256" rx="40" fill="rgba(255,255,255,.13)" stroke="rgba(255,255,255,.2)"/>
+          <text x="96" y="170" font-family="Georgia,serif" font-size="64" fill="#ffffff" font-weight="700">${title}</text>
+          <text x="96" y="220" font-family="Microsoft YaHei, sans-serif" font-size="28" fill="rgba(255,255,255,.9)">${subtitle}</text>
+          <rect x="96" y="262" width="238" height="14" rx="7" fill="rgba(255,255,255,.75)"/>
+          <rect x="96" y="292" width="180" height="14" rx="7" fill="rgba(255,255,255,.5)"/>
+          <circle cx="946" cy="248" r="96" fill="rgba(255,255,255,.18)"/>
+          <circle cx="946" cy="248" r="62" fill="rgba(255,255,255,.26)"/>
+          <path d="M894 247h104M946 195v104" stroke="#fff" stroke-width="14" stroke-linecap="round"/>
+          <rect x="744" y="514" width="362" height="122" rx="28" fill="rgba(15,20,23,.26)" stroke="rgba(255,255,255,.16)"/>
+          <text x="780" y="564" font-family="Microsoft YaHei, sans-serif" font-size="28" fill="#fff" font-weight="700">Weixin 摇一摇</text>
+          <text x="780" y="603" font-family="Microsoft YaHei, sans-serif" font-size="20" fill="rgba(255,255,255,.82)">离线高保真交互原型</text>
+        </svg>`;
+      return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg.trim());
+    }
+
+    function createActivities(){
+      return [
+        {
+          id: 'ACT-240501',
+          name: '夏日惊喜满减券',
+          extId: 'EXT-SUMMER-001',
+          couponType: 'discount',
+          typeName: typeLabel.discount,
+          status: 'DRAFT',
+          scope: '全部门店',
+          creator: '林静',
+          modifier: '林静',
+          createdAt: '2026-05-13 09:20',
+          updatedAt: '2026-05-13 10:05',
+          useMode: 'SINGLE',
+          codeMode: 'UPLOAD',
+          productImage: svgArt('SUMMER', '满减券主视觉', ['#123a4a', '#2f7280', '#d76b36']),
+          backgroundImage: svgArt('BRAND', '背景图', ['#a6441d', '#e1b05d', '#f4efe5']),
+          title: '夏日惊喜满减券',
+          subtitle: '满 199 立减 50',
+          ruleSummary: '用于夏日营销活动，支持限时限门店投放，文案和图片需保持品牌统一。',
+          threshold: 199,
+          discount: 50,
+          discountNote: '仅限活动期内核销一次，叠加规则按门店策略执行。',
+          price: '',
+          details: [
+            svgArt('DETAIL', '权益说明', ['#123a4a', '#356b79', '#e9c28d']),
+            svgArt('RULE', '使用说明', ['#356b79', '#1f7a57', '#d76b36']),
+          ],
+          batches: [
+            {
+              id: 'B-240501-01',
+              name: '夏日券-A批',
+              status: 'READY',
+              start: '2026-05-16',
+              end: '2026-06-16',
+              codeTotal: 12000,
+              codeAvailable: 12000,
+              issued: 0,
+              scope: 'ALL',
+              budgetTotal: 30000,
+              dailyBudget: 2000,
+              perUser: 1,
+              storeCount: 0,
+              stores: [],
+              notify: '开启微信通知',
+              codeStatus: '待校验',
+              codeFile: '系统自动生成',
+              codeCheckedAt: '—',
+              remarks: '草稿活动的预配置批次。',
+              tab: 'basic',
+            },
+            {
+              id: 'B-240501-02',
+              name: '夏日券-B批',
+              status: 'READY',
+              start: '2026-05-20',
+              end: '2026-06-20',
+              codeTotal: 8000,
+              codeAvailable: 8000,
+              issued: 0,
+              scope: 'SPECIFIC',
+              budgetTotal: 18000,
+              dailyBudget: 1200,
+              perUser: 1,
+              storeCount: 3,
+              stores: ['上海静安店', '杭州湖滨店', '南京新街口店'],
+              notify: '关闭',
+              codeStatus: '待校验',
+              codeFile: '系统自动生成',
+              codeCheckedAt: '—',
+              remarks: '指定门店测试批次。',
+              tab: 'store',
+            }
+          ]
+        },
+        {
+          id: 'ACT-240502',
+          name: '会员兑换礼遇券',
+          extId: 'EXT-MEMBER-002',
+          couponType: 'exchange',
+          typeName: typeLabel.exchange,
+          status: 'EFFECTIVE',
+          scope: '指定门店',
+          creator: '陈诺',
+          modifier: '张妍',
+          createdAt: '2026-05-12 16:40',
+          updatedAt: '2026-05-13 08:32',
+          useMode: 'SINGLE',
+          codeMode: 'UPLOAD',
+          productImage: svgArt('MEMBER', '兑换券主视觉', ['#1a7d5b', '#356b79', '#d76b36']),
+          backgroundImage: svgArt('GIFT', '背景图', ['#3b5d7a', '#1f7a57', '#e6c17d']),
+          title: '会员专享兑换礼遇',
+          subtitle: '积分换购，限量发放',
+          ruleSummary: '生效中的兑换活动，支持修改展示文案和批次管理，批次已自动生成券码结果。',
+          threshold: '',
+          discount: '',
+          discountNote: '',
+          price: 128,
+          details: [
+            svgArt('SKU', '商品组展示', ['#1a7d5b', '#2c8f6d', '#e7b76c']),
+            svgArt('GIFT', '兑换说明', ['#356b79', '#123a4a', '#d76b36']),
+            svgArt('STORE', '门店信息', ['#3d6d78', '#1f7a57', '#e9c28d']),
+          ],
+          combos: [
+            {
+              name: '会员礼盒',
+              quantity: 1,
+              products: [
+                { name: '品牌周边礼盒', price: 128, count: 1, image: '', appid: 'wx001', path: '/gift/box' }
+              ]
+            }
+          ],
+          batches: [
+            {
+              id: 'B-240502-01',
+              name: '兑换券-A批',
+              status: 'SENDING',
+              start: '2026-05-14',
+              end: '2026-06-14',
+              codeTotal: 15000,
+              codeAvailable: 4800,
+              issued: 10200,
+              scope: 'SPECIFIC',
+              budgetTotal: 32000,
+              dailyBudget: 2600,
+              perUser: 1,
+              storeCount: 18,
+              stores: ['上海静安店', '杭州湖滨店', '广州天河店'],
+              notify: '开启微信通知',
+              codeStatus: '已校验',
+              codeFile: 'system-generated-codes.xlsx',
+              codeCheckedAt: '2026-05-13 08:15',
+              remarks: '运行中的主批次。',
+              tab: 'control',
+            },
+            {
+              id: 'B-240502-02',
+              name: '兑换券-B批',
+              status: 'PAUSED',
+              start: '2026-05-18',
+              end: '2026-06-18',
+              codeTotal: 9000,
+              codeAvailable: 9000,
+              issued: 0,
+              scope: 'ALL',
+              budgetTotal: 18000,
+              dailyBudget: 1600,
+              perUser: 2,
+              storeCount: 0,
+              stores: [],
+              notify: '关闭',
+              codeStatus: '已校验',
+              codeFile: 'system-generated-codes-paused.xlsx',
+              codeCheckedAt: '2026-05-12 14:50',
+              remarks: '等待恢复发放。',
+              tab: 'control',
+            }
+          ]
+        },
+        {
+          id: 'ACT-240503',
+          name: '新品首发摇奖券',
+          extId: 'EXT-NEW-003',
+          couponType: 'discount',
+          typeName: typeLabel.discount,
+          status: 'AUDITING',
+          scope: '全部门店',
+          creator: '王帆',
+          modifier: '王帆',
+          createdAt: '2026-05-13 11:10',
+          updatedAt: '2026-05-13 11:26',
+          useMode: 'SINGLE',
+          codeMode: 'UPLOAD',
+          productImage: svgArt('NEW', '摇奖券主视觉', ['#123a4a', '#356b79', '#1f7a57']),
+          backgroundImage: svgArt('LAUNCH', '背景图', ['#1f7a57', '#356b79', '#d76b36']),
+          title: '新品首发摇奖券',
+          subtitle: '首发专享，限量参与',
+          ruleSummary: '审批中的活动，当前仅允许查看详情，禁止再进入编辑或修改链路。',
+          threshold: 99,
+          discount: 20,
+          discountNote: '仅用于新客活动。',
+          price: '',
+          details: [svgArt('AUDIT', '审批说明', ['#123a4a', '#1f7a57', '#e6c17d'])],
+          batches: [
+            {
+              id: 'B-240503-01',
+              name: '新品券-A批',
+              status: 'AUDITING',
+              start: '2026-05-20',
+              end: '2026-06-01',
+              codeTotal: 5000,
+              codeAvailable: 5000,
+              issued: 0,
+              scope: 'ALL',
+              budgetTotal: 12000,
+              dailyBudget: 1000,
+              perUser: 1,
+              storeCount: 0,
+              stores: [],
+              notify: '开启微信通知',
+              codeStatus: '待生成',
+              codeFile: '—',
+              codeCheckedAt: '—',
+              remarks: '待审核批次。',
+              tab: 'basic',
+            }
+          ]
+        },
+        {
+          id: 'ACT-240504',
+          name: '历史清退活动',
+          extId: 'EXT-OLD-004',
+          couponType: 'exchange',
+          typeName: typeLabel.exchange,
+          status: 'DEACTIVATED',
+          scope: '全部门店',
+          creator: '刘岩',
+          modifier: '刘岩',
+          createdAt: '2026-05-10 13:00',
+          updatedAt: '2026-05-12 18:00',
+          useMode: 'SINGLE',
+          codeMode: 'UPLOAD',
+          productImage: svgArt('OLD', '历史活动', ['#6a5c56', '#8a6d51', '#d8b98a']),
+          backgroundImage: svgArt('ARCHIVE', '背景图', ['#8a6d51', '#5c686f', '#d9ccb5']),
+          title: '历史清退活动',
+          subtitle: '仅查看，不可操作',
+          ruleSummary: '已失效活动，仅作为历史快照展示。',
+          price: 58,
+          combos: [
+            { name: '历史礼包', quantity: 1, products: [{ name: '旧版礼包', price: 58, count: 1, image: '', appid: '', path: '' }] }
+          ],
+          details: [svgArt('ARCHIVE', '历史快照', ['#6a5c56', '#8a6d51', '#d8b98a'])],
+          batches: [
+            {
+              id: 'B-240504-01',
+              name: '历史批次',
+              status: 'DEACTIVATED',
+              start: '2026-05-12',
+              end: '2026-05-20',
+              codeTotal: 2000,
+              codeAvailable: 0,
+              issued: 2000,
+              scope: 'ALL',
+              budgetTotal: 5000,
+              dailyBudget: 400,
+              perUser: 1,
+              storeCount: 0,
+              stores: [],
+              notify: '关闭',
+              codeStatus: '已失效',
+              codeFile: 'archived-codes.xlsx',
+              codeCheckedAt: '2026-05-12 10:20',
+              remarks: '历史批次，不可再操作。',
+              tab: 'control',
+            }
+          ]
+        }
+      ];
+    }
+
+    const appState = {
+      page: 'list',
+      selectedActivityId: 'ACT-240502',
+      selectedBatchId: 'B-240502-01',
+      dirty: { add: false, edit: false, modify: false, batch: false },
+      filters: { name: '', id: '', extId: '', status: '', type: '' },
+      add: initAddDraft('discount'),
+      edit: null,
+      modify: null,
+      modal: null,
+      toast: [],
+      confirmResolve: null,
+      activities: createActivities(),
+    };
+
+    function initAddDraft(type){
+      return {
+        couponType: type,
+        name: '',
+        extId: '',
+        image: '',
+        bg: '',
+        details: [],
+        title: '',
+        subtitle: '',
+        ruleSummary: '',
+        threshold: '',
+        discount: '',
+        discountNote: '',
+        price: '',
+        combos: type === 'exchange' ? [blankCombo()] : [],
+        batchReadyCount: 0,
+        useMode: 'SINGLE',
+        codeMode: 'UPLOAD',
+      };
+    }
+    function blankCombo(){
+      return { name: '', quantity: 1, products: [{ name: '', price: '', count: 1, image: '', appid: '', path: '' }] };
+    }
+
+    function currentActivity(){
+      return appState.activities.find(a => a.id === appState.selectedActivityId) || appState.activities[0];
+    }
+    function currentBatch(){
+      const a = currentActivity();
+      if (!a) return null;
+      return a.batches.find(b => b.id === appState.selectedBatchId) || a.batches[0] || null;
+    }
+    function currentEditDraft(){
+      if (!appState.edit) appState.edit = clone(currentActivity());
+      return appState.edit;
+    }
+    function currentModifyDraft(){
+      if (!appState.modify) {
+        const a = currentActivity();
+        appState.modify = {
+          id: a.id,
+          main: {
+            name: a.name,
+            extId: a.extId,
+            title: a.title,
+            subtitle: a.subtitle,
+            image: a.productImage,
+            bg: a.backgroundImage,
+          },
+          supplement: {
+            ruleSummary: a.ruleSummary,
+            extraNote: '支持文案、图文补充和展示顺序微调。',
+            details: clone(a.details || []),
+          }
+        };
+      }
+      return appState.modify;
+    }
+
+    function pushToast(title, msg){
+      const id = Date.now() + Math.random();
+      appState.toast.push({ id, title, msg });
+      render();
+      setTimeout(() => {
+        appState.toast = appState.toast.filter(t => t.id !== id);
+        render();
+      }, 2600);
+    }
+
+    function openModal(title, body, buttons){
+      appState.modal = { title, body, buttons };
+      render();
+    }
+    function closeModal(){
+      appState.modal = null;
+      appState.confirmResolve = null;
+      render();
+    }
+    function confirmDialog(title, body, okText = '确认', cancelText = '取消'){
+      return new Promise((resolve) => {
+        appState.confirmResolve = resolve;
+        openModal(title, body, [
+          { text: cancelText, kind: 'ghost', action: 'modal-cancel' },
+          { text: okText, kind: 'primary', action: 'modal-ok' },
+        ]);
+      });
+    }
+
+    function setPage(page, opts = {}){
+      if (page === 'add' && !appState.add) appState.add = initAddDraft('discount');
+      if (page === 'edit') appState.edit = clone(currentActivity());
+      if (page === 'modify') appState.modify = null;
+      appState.page = page;
+      if (opts.activityId) appState.selectedActivityId = opts.activityId;
+      if (opts.batchId) appState.selectedBatchId = opts.batchId;
+      if (page === 'batch' && !opts.batchId) {
+        const batch = currentActivity()?.batches?.[0];
+        if (batch) appState.selectedBatchId = batch.id;
+      }
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function allowedEdit(a){ return a.status === 'DRAFT'; }
+    function allowedModify(a){ return a.status === 'EFFECTIVE'; }
+    function allowedBatch(a){ return a.status === 'DRAFT' || a.status === 'EFFECTIVE'; }
+    function allowedInvalidate(a){ return a.status === 'DRAFT' || a.status === 'EFFECTIVE'; }
+
+    function filteredActivities(){
+      return appState.activities.filter(a => {
+        const f = appState.filters;
+        const match = (val, q) => !q || String(val).toLowerCase().includes(String(q).toLowerCase());
+        return match(a.name, f.name)
+          && match(a.id, f.id)
+          && match(a.extId, f.extId)
+          && (!f.status || a.status === f.status)
+          && (!f.type || a.couponType === f.type);
+      });
+    }
+
+    function render(){
+      const root = document.getElementById('app');
+      const a = currentActivity();
+      const b = currentBatch();
+      root.innerHTML = `
+        <div class="shell">
+          ${renderSidebar()}
+          <div class="workspace">
+            ${renderTopbar(a, b)}
+            <div class="page-stack">
+              <div class="page ${appState.page === 'list' ? 'active' : ''}">${renderListPage()}</div>
+              <div class="page ${appState.page === 'add' ? 'active' : ''}">${renderAddPage()}</div>
+              <div class="page ${appState.page === 'edit' ? 'active' : ''}">${renderEditPage()}</div>
+              <div class="page ${appState.page === 'modify' ? 'active' : ''}">${renderModifyPage()}</div>
+              <div class="page ${appState.page === 'detail' ? 'active' : ''}">${renderDetailPage()}</div>
+              <div class="page ${appState.page === 'batch' ? 'active' : ''}">${renderBatchPage()}</div>
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('modal').innerHTML = appState.modal ? renderModal() : '';
+      document.getElementById('modal').className = `modal${appState.modal ? ' open' : ''}`;
+      document.getElementById('toastWrap').innerHTML = appState.toast.map(t => `
+        <div class="toast">
+          <div class="title">${esc(t.title)}</div>
+          <div class="msg">${esc(t.msg)}</div>
+        </div>
+      `).join('');
+      bindDynamic();
+    }
+
+    function renderSidebar(){
+      const a = currentActivity();
+      const b = currentBatch();
+      return `
+        <aside class="sidebar">
+          <div class="brand">
+            <div class="brand-badge">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+                <path d="M5 15.2C8.2 10.2 12.1 8 17.1 8c2 0 3.9.4 5.8 1.3" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M6.2 21c2.6-2.7 5.6-4.1 9.3-4.1 2.9 0 5.6.7 8 2.2" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+                <circle cx="9" cy="16" r="1.7" fill="#fff"/>
+                <circle cx="15" cy="12.2" r="1.7" fill="#fff"/>
+                <circle cx="20.8" cy="18.7" r="1.7" fill="#fff"/>
+              </svg>
+            </div>
+            <h2 class="brand-title">Weixin 摇一摇</h2>
+            <p class="brand-sub">离线高保真原型 · 单文件可交互 · 六页面状态联动</p>
+          </div>
+          <div class="side-meta">
+            <div class="meta-card">
+              <div class="k">当前活动</div>
+              <div class="v">${esc(a.name)}</div>
+              <div class="small" style="margin-top:6px;">${esc(a.id)} · ${esc(a.extId)}</div>
+            </div>
+            <div class="meta-card">
+              <div class="k">当前批次</div>
+              <div class="v">${esc(b ? b.name : '未选中')}</div>
+              <div class="small" style="margin-top:6px;">${esc(b ? batchState(b.status) : '—')}</div>
+            </div>
+          </div>
+          <nav class="nav-list">
+            <button class="nav-item ${appState.page === 'list' ? 'active' : ''}" data-page="list">
+              <span>
+                <div class="name">活动列表</div>
+                <div class="hint">筛选、查看、编辑、批次管理</div>
+              </span>
+              <span>01</span>
+            </button>
+            <button class="nav-item ${appState.page === 'add' ? 'active' : ''}" data-page="add">
+              <span>
+                <div class="name">活动新增</div>
+                <div class="hint">首次创建，保存草稿 / 提交审核</div>
+              </span>
+              <span>02</span>
+            </button>
+            <button class="nav-item ${appState.page === 'edit' ? 'active' : ''}" data-page="edit">
+              <span>
+                <div class="name">活动编辑</div>
+                <div class="hint">草稿续填唯一入口</div>
+              </span>
+              <span>03</span>
+            </button>
+            <button class="nav-item ${appState.page === 'modify' ? 'active' : ''}" data-page="modify">
+              <span>
+                <div class="name">活动修改</div>
+                <div class="hint">生效中展示修正</div>
+              </span>
+              <span>04</span>
+            </button>
+            <button class="nav-item ${appState.page === 'detail' ? 'active' : ''}" data-page="detail">
+              <span>
+                <div class="name">活动详情</div>
+                <div class="hint">状态快照、操作入口</div>
+              </span>
+              <span>05</span>
+            </button>
+            <button class="nav-item ${appState.page === 'batch' ? 'active' : ''}" data-page="batch">
+              <span>
+                <div class="name">批次管理</div>
+                <div class="hint">预配置、校验、发放控制</div>
+              </span>
+              <span>06</span>
+            </button>
+          </nav>
+          <div class="hint-box info" style="position:relative; z-index:1;">
+            <strong>当前校验口径</strong><br/>
+            新增页包含 <code>外部商品ID</code>；批次页仅展示系统自动生成 / 回传的券码结果，不提供人工上传入口；暂停批次可继续。
+          </div>
+        </aside>
+      `;
+    }
+
+    function renderTopbar(a, b){
+      const labels = {
+        list: '活动列表',
+        add: '活动新增',
+        edit: '活动编辑',
+        modify: '活动修改',
+        detail: '活动详情',
+        batch: '批次管理',
+      };
+      const subtitles = {
+        list: '按状态筛选活动，查看、编辑、修改与批次管理入口按规则分发。',
+        add: '两段式创建流程，先选券类型，再进入活动创建表单。',
+        edit: '草稿续填入口，仅承接草稿内容，不接审批中或生效后修订。',
+        modify: '生效中活动的展示修正入口，分为主展示修正与补充展示修正。',
+        detail: '活动快照页，统一承载状态、批次概览和可用操作。',
+        batch: '活动下的批次预配置、校验、门店、预算、通知与发放控制。',
+      };
+      return `
+        <header class="topbar">
+          <div class="view-title">
+            <div class="crumbs">
+              <strong>Weixin 摇一摇</strong>
+              <span>·</span>
+              <span>${esc(labels[appState.page])}</span>
+              <span>·</span>
+              <span>${esc(a.name)}</span>
+              ${b ? `<span>·</span><span>${esc(b.name)}</span>` : ''}
+            </div>
+            <h1>${esc(labels[appState.page])}</h1>
+            <p>${esc(subtitles[appState.page])}</p>
+          </div>
+          <div class="toolbar">
+            <button class="btn ghost" data-action="refresh-current">刷新当前页</button>
+            <button class="btn primary" data-action="go-list">回到列表</button>
+          </div>
+        </header>
+      `;
+    }
+
+    function renderListPage(){
+      const rows = filteredActivities().map(renderListRow).join('');
+      return `
+        <section class="card">
+          <div class="card-hd">
+            <div>
+              <h2>活动列表</h2>
+              <p>列表页按活动状态分发到详情、编辑、修改与批次管理。这里会直接反映状态门禁，便于验证每个动作是否可进入。</p>
+            </div>
+            <div class="toolbar">
+              <button class="btn primary" data-action="go-add">新增活动</button>
+              <button class="btn ghost" data-action="reset-filters">重置筛选</button>
+              <button class="btn" data-action="apply-filters">查询</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="filter-grid">
+              ${renderInput('商品券名称', 'name', appState.filters.name, '模糊查询', 3, 'filter')}
+              ${renderInput('商品券ID', 'id', appState.filters.id, '精确或模糊', 3, 'filter')}
+              ${renderInput('外部商品ID', 'extId', appState.filters.extId, '外部系统编号', 3, 'filter')}
+              ${renderSelect('状态', 'status', ['','DRAFT','AUDITING','EFFECTIVE','DEACTIVATED'], appState.filters.status, 3, 'filter')}
+              ${renderSelect('券类型', 'type', ['','discount','exchange'], appState.filters.type, 3, 'filter')}
+              <div class="field span-12">
+                <div class="hint-box info">列表页只展示活动层信息。<code>编辑</code> 仅草稿可进，<code>修改</code> 仅生效中可进，<code>批次管理</code> 在草稿和生效中可进，<code>失效</code> 需要二次确认。</div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="card">
+          <div class="card-hd">
+            <div>
+              <h2>活动列表</h2>
+              <p>按钮按状态控制显示与可点状态，便于逐个页面、逐个按钮核对。</p>
+            </div>
+            <div class="chips">
+              <span class="chip brand"><strong>当前结果</strong> ${filteredActivities().length} 条</span>
+              <span class="chip"><strong>活动状态</strong> 草稿 / 审批中 / 生效中 / 已失效</span>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>商品券名称</th>
+                    <th>商品券ID</th>
+                    <th>外部商品ID</th>
+                    <th>券类型</th>
+                    <th>范围</th>
+                    <th>活动日期窗覆盖</th>
+                    <th>状态</th>
+                    <th>创建人</th>
+                    <th>最后修改人</th>
+                    <th>创建时间</th>
+                    <th>最后修改时间</th>
+                    <th>批次数</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${rows || `<tr><td colspan="13"><div class="empty">没有匹配的数据</div></td></tr>`}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderListRow(a){
+      const canEdit = allowedEdit(a);
+      const canModify = allowedModify(a);
+      const canBatch = allowedBatch(a);
+      const canInvalidate = allowedInvalidate(a);
+      const coverage = a.batches.length
+        ? `${a.batches.map(b => `${fmtDate(b.start)} ~ ${fmtDate(b.end)}`).join(' / ')}`
+        : '—';
+      return `
+        <tr>
+          <td>
+            <div style="display:grid; gap:4px;">
+              <strong>${esc(a.name)}</strong>
+              <span class="small">${esc(a.title)}</span>
+            </div>
+          </td>
+          <td><code style="color:#8a4d14;">${esc(a.id)}</code></td>
+          <td>${esc(a.extId)}</td>
+          <td><span class="pill hot">${esc(a.typeName)}</span></td>
+          <td>${esc(a.scope)}</td>
+          <td>${esc(coverage)}</td>
+          <td><span class="status-tag ${statusClass(a.status)}">${esc(statusLabel[a.status] || a.status)}</span></td>
+          <td>${esc(a.creator)}</td>
+          <td>${esc(a.modifier)}</td>
+          <td>${esc(a.createdAt)}</td>
+          <td>${esc(a.updatedAt)}</td>
+          <td>${a.batches.length}</td>
+          <td>
+            <div class="row-actions">
+              <button class="mini-btn primary" data-action="open-detail" data-id="${esc(a.id)}">查看</button>
+              <button class="mini-btn blue" data-action="open-edit" data-id="${esc(a.id)}" ${canEdit ? '' : 'disabled'}>编辑</button>
+              <button class="mini-btn green" data-action="open-modify" data-id="${esc(a.id)}" ${canModify ? '' : 'disabled'}>修改</button>
+              <button class="mini-btn" data-action="open-batch" data-id="${esc(a.id)}" ${canBatch ? '' : 'disabled'}>批次管理</button>
+              <button class="mini-btn red" data-action="invalidate-activity" data-id="${esc(a.id)}" ${canInvalidate ? '' : 'disabled'}>失效</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderInput(label, key, value, hint, span, scope){
+      return `
+        <div class="field span-${span}">
+          <label>${esc(label)}<span class="hint">${esc(hint)}</span></label>
+          <input data-scope="${scope}" data-field="${esc(key)}" value="${esc(value)}" placeholder="${esc(hint)}" />
+        </div>
+      `;
+    }
+    function renderSelect(label, key, options, value, span, scope){
+      return `
+        <div class="field span-${span}">
+          <label>${esc(label)}<span class="hint">下拉单选</span></label>
+          <select data-scope="${scope}" data-field="${esc(key)}">
+            ${options.map(o => `<option value="${esc(o)}" ${o === value ? 'selected' : ''}>${esc(labelValue(key, o))}</option>`).join('')}
+          </select>
+        </div>
+      `;
+    }
+    function labelValue(key, value){
+      if (key === 'type') return ({'':'全部','discount':'满减券','exchange':'兑换券'})[value] || value;
+      if (key === 'status') return ({'':'全部','DRAFT':'草稿','AUDITING':'审批中','EFFECTIVE':'生效中','DEACTIVATED':'已失效'})[value] || value;
+      return value || '全部';
+    }
+
+    function renderAddPage(){
+      const d = appState.add;
+      const ready = d.batchReadyCount || 0;
+      const isDiscount = d.couponType === 'discount';
+      return `
+        <section class="card">
+          <div class="card-hd">
+            <div>
+              <h2>活动新增页</h2>
+              <p>两段式创建：先选券类型，再进入表单。新增页不承接已有草稿续填，但支持保存草稿。保存草稿要求最小识别信息，提交审核要求字段完整和批次门禁满足。</p>
+            </div>
+            <div class="toolbar">
+              <button class="btn ghost" data-action="add-back-list">返回列表</button>
+              <button class="btn ghost" data-action="add-reset">重置表单</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="split-2">
+              <div class="stack">
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>券类型选择</h3>
+                      <p>选定后锁定类型，避免活动主结构漂移。</p>
+                    </div>
+                    <div class="badge-stack">
+                      <span class="chip brand"><strong>使用模式</strong> SINGLE</span>
+                      <span class="chip warn"><strong>Code分配模式</strong> UPLOAD</span>
+                    </div>
+                  </div>
+                  <div class="type-picker">
+                    <button class="type-card ${d.couponType === 'discount' ? 'active' : ''}" data-action="choose-type" data-type="discount">
+                      <div class="mark">¥</div>
+                      <div>
+                        <h4>满减券</h4>
+                        <p>适合门槛减免场景，支持门槛金额、减免金额与规则说明。</p>
+                      </div>
+                    </button>
+                    <button class="type-card exchange ${d.couponType === 'exchange' ? 'active' : ''}" data-action="choose-type" data-type="exchange">
+                      <div class="mark">礼</div>
+                      <div>
+                        <h4>兑换券</h4>
+                        <p>适合商品兑换场景，支持单品组合、原价和数量配置。</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>页面门禁</h3>
+                      <p>新增页只负责首次创建，不识别已有草稿。</p>
+                    </div>
+                  </div>
+                  <div class="hint-box info">
+                    <ol class="check-list">
+                      <li>保存草稿：允许主字段未完整填写，但必须至少具备 <strong>商品券名称</strong>、<strong>外部商品ID</strong>、券类型和最小商品结构。</li>
+                      <li>提交审核：要求表单字段完整，且 <strong>至少 1 个已完成预配置且通过校验的批次</strong>。</li>
+                      <li>提交成功后活动状态变为 <strong>审批中</strong>，并返回活动详情页。</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+              <div class="stack">
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>创建表单</h3>
+                      <p>公共主字段 + 类型差异区。</p>
+                    </div>
+                    <span class="chip"><strong>当前类型</strong> ${esc(typeLabel[d.couponType])}</span>
+                  </div>
+                  ${renderActivityForm('add')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderActivityForm(scope){
+      const d = scope === 'add' ? appState.add : currentEditDraft();
+      const isDiscount = d.couponType === 'discount';
+      const isExchange = d.couponType === 'exchange';
+      const previewCover = d.image || currentActivity().productImage;
+      const previewBg = d.bg || currentActivity().backgroundImage;
+      const previewDetail = d.details?.[0] || currentActivity().details?.[0];
+      const requiredMark = scope === 'add' ? 'data-required="1"' : '';
+      return `
+        <div class="form-grid">
+          <div class="field span-6">
+            <label>商品券名称<span class="hint">必填</span></label>
+            <input data-scope="${scope}" data-field="name" ${requiredMark} value="${esc(d.name || '')}" placeholder="3-15 个字" />
+            <div class="error-text" data-error-for="${scope}.name"></div>
+          </div>
+          <div class="field span-6">
+            <label>外部商品ID<span class="hint">必填</span></label>
+            <input data-scope="${scope}" data-field="extId" ${requiredMark} value="${esc(d.extId || '')}" placeholder="外部商品系统商品唯一标识" />
+            <div class="error-text" data-error-for="${scope}.extId"></div>
+          </div>
+          <div class="field span-6">
+            <label>商品券图片<span class="hint">建议 1:1</span></label>
+            <input data-scope="${scope}" data-field="image" value="${esc(d.image || '')}" placeholder="粘贴图片链接，或上传文件后自动填充" />
+            <div class="error-text" data-error-for="${scope}.image"></div>
+          </div>
+          <div class="field span-6">
+            <label>商品券背景图<span class="hint">建议 65:77</span></label>
+            <input data-scope="${scope}" data-field="bg" value="${esc(d.bg || '')}" placeholder="粘贴背景图链接，或上传文件后自动填充" />
+            <div class="error-text" data-error-for="${scope}.bg"></div>
+          </div>
+          <div class="field span-6">
+            <label>商品券标题文案<span class="hint">必填</span></label>
+            <input data-scope="${scope}" data-field="title" ${requiredMark} value="${esc(d.title || '')}" placeholder="3-20 个字" />
+            <div class="error-text" data-error-for="${scope}.title"></div>
+          </div>
+          <div class="field span-6">
+            <label>商品券副标题<span class="hint">可选</span></label>
+            <input data-scope="${scope}" data-field="subtitle" value="${esc(d.subtitle || '')}" placeholder="0-30 个字" />
+            <div class="error-text" data-error-for="${scope}.subtitle"></div>
+          </div>
+          <div class="field span-12">
+            <label>商品券详情图<span class="hint">最多 8 张</span></label>
+            <input type="file" multiple accept="image/*" data-file-scope="${scope}" data-field="details" />
+            <div class="small">可上传本地图片，原型会自动生成预览。离线状态下可直接用文件上传验证流程。</div>
+            <div class="error-text" data-error-for="${scope}.details"></div>
+          </div>
+          <div class="field span-12">
+            <label>规则摘要<span class="hint">必填</span></label>
+            <textarea data-scope="${scope}" data-field="ruleSummary" ${requiredMark} placeholder="0-200 个字">${esc(d.ruleSummary || '')}</textarea>
+            <div class="error-text" data-error-for="${scope}.ruleSummary"></div>
+          </div>
+          <div class="field span-4">
+            <label>使用模式<span class="hint">只读固定值</span></label>
+            <input readonly value="SINGLE" />
+          </div>
+          <div class="field span-4">
+            <label>Code分配模式<span class="hint">只读固定值</span></label>
+            <input readonly value="UPLOAD" />
+          </div>
+          <div class="field span-4">
+            <label>批次门禁<span class="hint">提交时检查</span></label>
+            <input data-scope="${scope}" data-field="batchReadyCount" type="number" min="0" value="${esc(d.batchReadyCount || 0)}" placeholder="已完成预配置批次数" />
+            <div class="error-text" data-error-for="${scope}.batchReadyCount"></div>
+          </div>
+        </div>
+
+        <div class="section-gap"></div>
+
+        <div class="section">
+          <div class="section-title">
+            <div>
+              <h3>${isDiscount ? '满减券差异区' : '兑换券差异区'}</h3>
+              <p>${isDiscount ? '配置门槛金额、减免金额和满减说明。' : '配置原价、商品组和组合明细。'}</p>
+            </div>
+            <span class="chip ${isDiscount ? 'good' : 'warn'}"><strong>差异字段</strong> ${isDiscount ? '门槛/减免' : '商品组/原价'}</span>
+          </div>
+          ${isDiscount ? `
+            <div class="form-grid">
+              <div class="field span-4">
+                <label>门槛金额<span class="hint">必填</span></label>
+                <input data-scope="${scope}" data-field="threshold" type="number" min="0" value="${esc(d.threshold || '')}" placeholder="如 199" />
+                <div class="error-text" data-error-for="${scope}.threshold"></div>
+              </div>
+              <div class="field span-4">
+                <label>减免金额<span class="hint">必填</span></label>
+                <input data-scope="${scope}" data-field="discount" type="number" min="0" value="${esc(d.discount || '')}" placeholder="如 50" />
+                <div class="error-text" data-error-for="${scope}.discount"></div>
+              </div>
+              <div class="field span-12">
+                <label>满减说明<span class="hint">可选</span></label>
+                <textarea data-scope="${scope}" data-field="discountNote" placeholder="补充说明、限制条件等">${esc(d.discountNote || '')}</textarea>
+              </div>
+            </div>
+          ` : `
+            <div class="form-grid">
+              <div class="field span-4">
+                <label>商品原价<span class="hint">必填</span></label>
+                <input data-scope="${scope}" data-field="price" type="number" min="0" value="${esc(d.price || '')}" placeholder="如 128" />
+                <div class="error-text" data-error-for="${scope}.price"></div>
+              </div>
+              <div class="field span-12">
+                <label>单品组合<span class="hint">支持新增、删除、数量修改</span></label>
+                ${renderComboEditor(scope, d.combos || [])}
+              </div>
+            </div>
+          `}
+        </div>
+
+        <div class="section-gap"></div>
+
+        <div class="preview-grid">
+          <div class="art"><img src="${esc(previewCover)}" alt=""><div class="label">商品券图片预览</div></div>
+          <div class="art"><img src="${esc(previewBg)}" alt=""><div class="label">商品券背景图预览</div></div>
+          <div class="art"><img src="${esc(previewDetail)}" alt=""><div class="label">商品券详情图预览</div></div>
+        </div>
+
+        <div class="form-actions">
+          ${scope === 'edit' ? `<button class="btn ghost" data-action="edit-back-detail">返回详情</button>` : `<button class="btn ghost" data-action="add-back-type">返回券类型选择页</button>`}
+          <button class="btn ghost" data-action="${scope === 'edit' ? 'edit-cancel' : 'add-cancel'}">取消</button>
+          <button class="btn" data-action="${scope === 'edit' ? 'edit-save-draft' : 'save-draft'}">保存草稿</button>
+          <button class="btn green" data-action="${scope === 'edit' ? 'edit-submit-review' : 'submit-review'}">提交审核</button>
+        </div>
+        <div class="hint-box info" style="margin-top:14px;">
+          保存草稿允许主字段不完整，但不能缺少 <strong>商品券名称</strong>、<strong>外部商品ID</strong>、券类型与最小商品结构。提交审核会额外校验批次门禁。
+        </div>
+      `;
+    }
+
+    function renderComboEditor(scope, combos){
+      const items = (combos && combos.length ? combos : [blankCombo()]).map((combo, idx) => `
+        <div class="combo-item" data-combo-index="${idx}">
+          <div class="combo-head">
+            <strong>组合 ${idx + 1}</strong>
+            <div class="inline-actions">
+              <button class="mini-btn" data-action="add-combo" data-scope="${scope}">新增组合</button>
+              <button class="mini-btn red" data-action="remove-combo" data-scope="${scope}" data-index="${idx}" ${idx === 0 && combos.length <= 1 ? 'disabled' : ''}>删除组合</button>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field span-6">
+              <label>组合名称<span class="hint">必填</span></label>
+              <input data-scope="${scope}" data-field="comboName" data-index="${idx}" value="${esc(combo.name || '')}" placeholder="如 会员礼盒" />
+            </div>
+            <div class="field span-3">
+              <label>组合数量<span class="hint">必填</span></label>
+              <input data-scope="${scope}" data-field="comboQuantity" data-index="${idx}" type="number" min="1" value="${esc(combo.quantity || 1)}" />
+            </div>
+          </div>
+          <div class="combo-products">
+            ${(combo.products || []).map((p, pIdx) => `
+              <div class="product-line" data-product-index="${pIdx}">
+                <input data-scope="${scope}" data-field="productName" data-index="${idx}" data-product="${pIdx}" value="${esc(p.name || '')}" placeholder="商品名称" />
+                <input data-scope="${scope}" data-field="productPrice" data-index="${idx}" data-product="${pIdx}" type="number" min="0" value="${esc(p.price || '')}" placeholder="单价" />
+                <input data-scope="${scope}" data-field="productCount" data-index="${idx}" data-product="${pIdx}" type="number" min="1" value="${esc(p.count || 1)}" placeholder="数量" />
+                <input data-scope="${scope}" data-field="productAppid" data-index="${idx}" data-product="${pIdx}" value="${esc(p.appid || '')}" placeholder="AppID" />
+                <input data-scope="${scope}" data-field="productPath" data-index="${idx}" data-product="${pIdx}" value="${esc(p.path || '')}" placeholder="小程序路径" />
+                <button class="mini-btn red" data-action="remove-product" data-scope="${scope}" data-index="${idx}" data-product="${pIdx}" ${combo.products.length <= 1 ? 'disabled' : ''}>删除</button>
+              </div>
+            `).join('')}
+          </div>
+          <div class="inline-actions">
+            <button class="mini-btn primary" data-action="add-product" data-scope="${scope}" data-index="${idx}">新增单品</button>
+          </div>
+        </div>
+      `).join('');
+      return `<div class="combo-list">${items}</div>`;
+    }
+
+    function renderEditPage(){
+      const a = currentActivity();
+      if (!appState.edit || appState.edit.id !== a.id) appState.edit = clone(a);
+      const editable = allowedEdit(a);
+      return `
+        <section class="card">
+          <div class="card-hd">
+            <div>
+              <h2>活动编辑页</h2>
+              <p>草稿续填唯一入口。仅当活动状态为草稿时可进入；<code>使用模式</code> 与 <code>Code分配模式</code> 为系统固定值。编辑页可保存草稿，也可提交审核。</p>
+            </div>
+            <div class="toolbar">
+              <button class="btn ghost" data-action="back-detail">返回详情</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            ${editable ? '<div class="hint-box success">当前活动处于草稿状态，可继续补全并保存或提交审核。</div>' : '<div class="hint-box warn">当前活动不是草稿，编辑页仅作只读展示。</div>'}
+            <div class="section-gap"></div>
+            <div class="detail-grid">
+              <div class="kv"><div class="k">商品券ID</div><div class="v">${esc(a.id)}</div></div>
+              <div class="kv"><div class="k">商品券类型</div><div class="v">${esc(a.typeName)}</div></div>
+              <div class="kv"><div class="k">外部商品ID</div><div class="v">${esc(a.extId)}</div></div>
+              <div class="kv"><div class="k">使用模式</div><div class="v">SINGLE</div></div>
+            </div>
+            <div class="section-gap"></div>
+            ${editable ? renderActivityForm('edit') : `
+              <div class="hint-box">草稿续填入口仅允许草稿活动进入。当前状态不满足条件，因此不展示可编辑表单。</div>
+            `}
+          </div>
+        </section>
+      `;
+    }
+
+    function renderModifyPage(){
+      const a = currentActivity();
+      if (a.status !== 'EFFECTIVE') {
+        return `
+          <section class="card">
+            <div class="card-hd">
+              <div>
+                <h2>活动修改页</h2>
+                <p>仅生效中活动可进入。该页用于展示修正，不承接草稿续填，不允许在审批中或已失效状态继续编辑。</p>
+              </div>
+            </div>
+            <div class="card-bd">
+              <div class="hint-box warn">当前活动状态为 <strong>${esc(statusLabel[a.status] || a.status)}</strong>，不允许进入修改页。</div>
+            </div>
+          </section>
+        `;
+      }
+      const m = currentModifyDraft();
+      return `
+        <section class="card">
+          <div class="card-hd">
+            <div>
+              <h2>活动修改页</h2>
+              <p>活动生效后展示修正入口，分为 <code>主展示修正</code> 和 <code>补充展示修正</code> 两部分。页面保持活动主结构，只允许调整展示层信息。</p>
+            </div>
+            <div class="toolbar">
+              <button class="btn ghost" data-action="back-detail">返回详情</button>
+              <button class="btn ghost" data-action="modify-reset">恢复快照</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="detail-grid">
+              <div class="kv"><div class="k">商品券ID</div><div class="v">${esc(a.id)}</div></div>
+              <div class="kv"><div class="k">商品券类型</div><div class="v">${esc(a.typeName)}</div></div>
+              <div class="kv"><div class="k">外部商品ID</div><div class="v">${esc(a.extId)}</div></div>
+              <div class="kv"><div class="k">当前状态</div><div class="v"><span class="status-tag ${statusClass(a.status)}">${esc(statusLabel[a.status])}</span></div></div>
+            </div>
+            <div class="section-gap"></div>
+            <div class="split-2">
+              <div class="panel">
+                <div class="panel-title">
+                  <div>
+                    <h4>主展示修正</h4>
+                    <p>允许调整活动标题、背景图、主文案和关键展示信息。</p>
+                  </div>
+                  <span class="chip brand"><strong>展示层</strong> 仅修正文案与视觉</span>
+                </div>
+                <div class="form-grid">
+                  <div class="field span-6">
+                    <label>商品券名称<span class="hint">只读</span></label>
+                    <input readonly value="${esc(a.name)}" />
+                  </div>
+                  <div class="field span-6">
+                    <label>外部商品ID<span class="hint">只读快照</span></label>
+                    <input readonly value="${esc(a.extId)}" />
+                  </div>
+                  <div class="field span-6">
+                    <label>商品券标题文案<span class="hint">可改</span></label>
+                    <input data-scope="modify" data-zone="main" data-field="title" value="${esc(m.main.title)}" />
+                  </div>
+                  <div class="field span-6">
+                    <label>商品券副标题<span class="hint">可改</span></label>
+                    <input data-scope="modify" data-zone="main" data-field="subtitle" value="${esc(m.main.subtitle)}" />
+                  </div>
+                  <div class="field span-6">
+                    <label>商品券图片<span class="hint">可改</span></label>
+                    <input data-scope="modify" data-zone="main" data-field="image" value="${esc(m.main.image)}" />
+                  </div>
+                  <div class="field span-6">
+                    <label>商品券背景图<span class="hint">可改</span></label>
+                    <input data-scope="modify" data-zone="main" data-field="bg" value="${esc(m.main.bg)}" />
+                  </div>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="panel-title">
+                  <div>
+                    <h4>补充展示修正</h4>
+                    <p>用于补充规则文案、辅助说明和详情图顺序微调。</p>
+                  </div>
+                  <span class="chip warn"><strong>补充层</strong> 文案与详情图</span>
+                </div>
+                <div class="form-grid">
+                  <div class="field span-12">
+                    <label>规则摘要<span class="hint">可改</span></label>
+                    <textarea data-scope="modify" data-zone="supplement" data-field="ruleSummary">${esc(m.supplement.ruleSummary)}</textarea>
+                  </div>
+                  <div class="field span-12">
+                    <label>补充说明<span class="hint">可改</span></label>
+                    <textarea data-scope="modify" data-zone="supplement" data-field="extraNote">${esc(m.supplement.extraNote)}</textarea>
+                  </div>
+                  <div class="field span-12">
+                    <label>详情图补充<span class="hint">最多 8 张</span></label>
+                    <input type="file" multiple accept="image/*" data-file-scope="modify" data-field="details" />
+                    <div class="small">上传后会更新补充展示图册。</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="section-gap"></div>
+            <div class="preview-grid">
+              <div class="art"><img src="${esc(m.main.image)}" alt=""><div class="label">主展示修正 - 商品券图片</div></div>
+              <div class="art"><img src="${esc(m.main.bg)}" alt=""><div class="label">主展示修正 - 背景图</div></div>
+              <div class="art"><img src="${esc((m.supplement.details && m.supplement.details[0]) || a.details[0])}" alt=""><div class="label">补充展示修正 - 详情图</div></div>
+            </div>
+            <div class="form-actions">
+              <button class="btn ghost" data-action="modify-cancel">取消</button>
+              <button class="btn" data-action="modify-save">保存修改</button>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderDetailPage(){
+      const a = currentActivity();
+      const editable = allowedEdit(a);
+      const modifiable = allowedModify(a);
+      const batchable = allowedBatch(a);
+      const invalidatable = allowedInvalidate(a);
+      const batchStatusText = a.batches.map(b => `${batchState(b.status)} × ${b.name}`).join(' / ');
+      return `
+        <section class="card">
+          <div class="card-hd">
+            <div>
+              <h2>活动详情页</h2>
+              <p>详情页是活动状态与动作入口的统一汇总页。按钮按状态分发，返回、编辑、修改、批次管理与失效都在这里做最终核对。</p>
+            </div>
+            <div class="toolbar">
+              <button class="btn ghost" data-action="back-list">返回列表</button>
+              <button class="btn primary" data-action="open-batch" data-id="${esc(a.id)}" ${batchable ? '' : 'disabled'}>批次管理</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            <div class="split-2">
+              <div class="stack">
+                <div class="preview-shell">
+                  <div class="cover" style="background-image:url('${esc(a.productImage)}')"></div>
+                  <div class="label">
+                    <h4>${esc(a.name)}</h4>
+                    <p>${esc(a.ruleSummary)}</p>
+                  </div>
+                </div>
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>动作入口</h3>
+                      <p>按当前活动状态控制按钮显示与可点状态。</p>
+                    </div>
+                    <div class="badge-stack">
+                      <span class="chip brand"><strong>当前状态</strong> ${esc(statusLabel[a.status])}</span>
+                      <span class="chip"><strong>批次状态</strong> ${esc(batchStatusText || '—')}</span>
+                    </div>
+                  </div>
+                  <div class="inline-actions">
+                    <button class="btn ghost" data-action="back-list">返回</button>
+                    <button class="btn primary" data-action="open-edit" data-id="${esc(a.id)}" ${editable ? '' : 'disabled'}>编辑</button>
+                    <button class="btn accent" data-action="open-modify" data-id="${esc(a.id)}" ${modifiable ? '' : 'disabled'}>修改</button>
+                    <button class="btn" data-action="open-batch" data-id="${esc(a.id)}" ${batchable ? '' : 'disabled'}>批次管理</button>
+                    <button class="btn red" data-action="invalidate-activity" data-id="${esc(a.id)}" ${invalidatable ? '' : 'disabled'}>失效</button>
+                  </div>
+                </div>
+              </div>
+              <div class="stack">
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>基础信息</h3>
+                      <p>活动层只读快照，便于核对状态、外部商品ID 和批次数量。</p>
+                    </div>
+                  </div>
+                  <div class="detail-grid">
+                    <div class="kv"><div class="k">商品券名称</div><div class="v">${esc(a.name)}</div></div>
+                    <div class="kv"><div class="k">商品券ID</div><div class="v">${esc(a.id)}</div></div>
+                    <div class="kv"><div class="k">外部商品ID</div><div class="v">${esc(a.extId)}</div></div>
+                    <div class="kv"><div class="k">券类型</div><div class="v">${esc(a.typeName)}</div></div>
+                    <div class="kv"><div class="k">活动状态</div><div class="v"><span class="status-tag ${statusClass(a.status)}">${esc(statusLabel[a.status])}</span></div></div>
+                    <div class="kv"><div class="k">使用模式</div><div class="v">SINGLE</div></div>
+                    <div class="kv"><div class="k">Code分配模式</div><div class="v">UPLOAD</div></div>
+                    <div class="kv"><div class="k">批次数量</div><div class="v">${a.batches.length}</div></div>
+                  </div>
+                </div>
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>状态说明</h3>
+                      <p>从编辑页、修改页或批次页返回后刷新最新快照。</p>
+                    </div>
+                  </div>
+                  <div class="timeline">
+                    ${timelineItem('当前状态', `${statusLabel[a.status]} · ${a.status === 'DRAFT' ? '可继续编辑与进入批次管理' : a.status === 'EFFECTIVE' ? '可进入修改与批次管理' : a.status === 'AUDITING' ? '仅可查看详情' : '仅可查看历史快照'}`)}
+                    ${timelineItem('批次概览', `${a.batches.length} 个批次 · ${a.batches.map(b => `${batchState(b.status)}(${b.name})`).join(' / ')}`)}
+                    ${timelineItem('主标识', `商品券ID ${a.id} · 外部商品ID ${a.extId}`)}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="section-gap"></div>
+            <div class="preview-grid">
+              <div class="art"><img src="${esc(a.productImage)}" alt=""><div class="label">商品券图片</div></div>
+              <div class="art"><img src="${esc(a.backgroundImage)}" alt=""><div class="label">商品券背景图</div></div>
+              <div class="art"><img src="${esc(a.details[0])}" alt=""><div class="label">详情图 / 补充展示</div></div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function timelineItem(title, text){
+      return `
+        <div class="timeline-item">
+          <div class="timeline-card">
+            <div class="meta">${esc(title)}</div>
+            <div class="txt">${esc(text)}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBatchPage(){
+      const a = currentActivity();
+      const b = currentBatch();
+      const editable = a.status !== 'DEACTIVATED';
+      const canEnter = allowedBatch(a);
+      return `
+        <section class="card">
+          <div class="card-hd">
+            <div>
+              <h2>批次管理页</h2>
+              <p>这里承载批次预配置、预算、门店、通知和发放控制。当前原型不提供人工上传入口，券码结果通过系统自动生成 / 回传体现。</p>
+            </div>
+            <div class="toolbar">
+              <button class="btn ghost" data-action="back-detail">返回详情</button>
+              <button class="btn primary" data-action="batch-new" ${editable ? '' : 'disabled'}>新建批次</button>
+            </div>
+          </div>
+          <div class="card-bd">
+            ${canEnter ? `<div class="hint-box info">当前活动状态为 <strong>${esc(statusLabel[a.status])}</strong>，批次管理页可进入并进行批次配置。</div>` : `<div class="hint-box warn">当前活动状态为 <strong>${esc(statusLabel[a.status])}</strong>，仅以只读方式展示，不支持继续编辑。</div>`}
+            <div class="section-gap"></div>
+            <div class="batch-wrap">
+              <div class="stack">
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>活动摘要</h3>
+                      <p>活动层与批次层分离，批次操作不会回写活动状态。</p>
+                    </div>
+                    <span class="chip brand"><strong>摘要</strong> ${esc(a.name)}</span>
+                  </div>
+                  <div class="detail-grid">
+                    <div class="kv"><div class="k">商品券名称</div><div class="v">${esc(a.name)}</div></div>
+                    <div class="kv"><div class="k">商品券ID</div><div class="v">${esc(a.id)}</div></div>
+                    <div class="kv"><div class="k">外部商品ID</div><div class="v">${esc(a.extId)}</div></div>
+                    <div class="kv"><div class="k">活动状态</div><div class="v"><span class="status-tag ${statusClass(a.status)}">${esc(statusLabel[a.status])}</span></div></div>
+                    <div class="kv"><div class="k">券类型</div><div class="v">${esc(a.typeName)}</div></div>
+                    <div class="kv"><div class="k">规则摘要</div><div class="v">${esc(a.ruleSummary)}</div></div>
+                  </div>
+                </div>
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>批次列表</h3>
+                      <p>按钮随批次状态变化。<code>继续</code> 仅对已暂停批次可用，相关人工上传入口已移除。</p>
+                    </div>
+                    <div class="badge-stack">
+                      <span class="chip"><strong>批次数</strong> ${a.batches.length}</span>
+                      <span class="chip good"><strong>当前选中</strong> ${esc(b ? b.name : '无')}</span>
+                    </div>
+                  </div>
+                  <div class="table-wrap">
+                    <table style="min-width: 1300px;">
+                      <thead>
+                        <tr>
+                          <th>批次ID</th>
+                          <th>批次名称</th>
+                          <th>状态</th>
+                          <th>开始日期</th>
+                          <th>结束日期</th>
+                          <th>Code总量</th>
+                          <th>可用Code</th>
+                          <th>已发放量</th>
+                          <th>创建人</th>
+                          <th>最后修改人</th>
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${a.batches.map(batch => renderBatchRow(batch, a)).join('')}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              <div class="stack">
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>批次详情</h3>
+                      <p>支持查看、预配置、预算、门店、券码结果、通知和发放控制。</p>
+                    </div>
+                    <span class="chip warn"><strong>当前批次</strong> ${esc(b ? b.name : '未选择')}</span>
+                  </div>
+                  ${b ? renderBatchDetailPane(a, b, canEnter) : '<div class="empty">未选择批次</div>'}
+                </div>
+                <div class="section">
+                  <div class="section-title">
+                    <div>
+                      <h3>说明</h3>
+                      <p>券码结果采用自动生成 / 回传，不提供人工上传文件。</p>
+                    </div>
+                  </div>
+                  <div class="hint-box success">
+                    <ul class="check-list" style="margin:0;">
+                      <li>批次处于 <strong>发放中</strong> 时可点 <strong>暂停</strong>。</li>
+                      <li>批次处于 <strong>已暂停</strong> 时可点 <strong>继续</strong>，恢复到发放中。</li>
+                      <li>批次的 <strong>失效</strong> 仅在受控状态下可触发。</li>
+                      <li>Code 相关区域只显示自动生成 / 回传状态与校验信息。</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderBatchRow(batch, activity){
+      const canPause = batch.status === 'SENDING';
+      const canContinue = batch.status === 'PAUSED';
+      const canSend = batch.status === 'READY' || batch.status === 'AUDITING';
+      const canStop = batch.status === 'SENDING' || batch.status === 'PAUSED';
+      const canEdit = activity.status !== 'DEACTIVATED';
+      return `
+        <tr>
+          <td><code style="color:#8a4d14;">${esc(batch.id)}</code></td>
+          <td>${esc(batch.name)}</td>
+          <td><span class="status-tag ${batchStateClass(batch.status)}">${esc(batchState(batch.status))}</span></td>
+          <td>${esc(fmtDate(batch.start))}</td>
+          <td>${esc(fmtDate(batch.end))}</td>
+          <td>${esc(batch.codeTotal)}</td>
+          <td>${esc(batch.codeAvailable)}</td>
+          <td>${esc(batch.issued)}</td>
+          <td>${esc(activity.creator)}</td>
+          <td>${esc(activity.modifier)}</td>
+          <td>
+            <div class="row-actions">
+              <button class="mini-btn primary" data-action="select-batch" data-id="${esc(batch.id)}">查看</button>
+              <button class="mini-btn blue" data-action="batch-edit-basic" data-id="${esc(batch.id)}" ${canEdit ? '' : 'disabled'}>预配置编辑</button>
+              <button class="mini-btn" data-action="batch-edit-budget" data-id="${esc(batch.id)}" ${canEdit ? '' : 'disabled'}>预算</button>
+              <button class="mini-btn" data-action="batch-edit-store" data-id="${esc(batch.id)}" ${canEdit ? '' : 'disabled'}>门店关联</button>
+              <button class="mini-btn green" data-action="batch-send" data-id="${esc(batch.id)}" ${canSend ? '' : 'disabled'}>发放</button>
+              <button class="mini-btn" data-action="batch-pause" data-id="${esc(batch.id)}" ${canPause ? '' : 'disabled'}>暂停</button>
+              <button class="mini-btn green" data-action="batch-continue" data-id="${esc(batch.id)}" ${canContinue ? '' : 'disabled'}>继续</button>
+              <button class="mini-btn red" data-action="batch-stop" data-id="${esc(batch.id)}" ${canStop ? '' : 'disabled'}>失效</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+
+    function renderBatchDetailPane(activity, batch, canEnter){
+      const tabs = ['basic','date','budget','store','code','notify','control'];
+      const tabMap = {
+        basic: '基础信息',
+        date: '日期窗',
+        budget: '预算配置',
+        store: '门店关联',
+        code: 'Code结果',
+        notify: '通知配置',
+        control: '发放控制',
+      };
+      const editable = canEnter && activity.status !== 'DEACTIVATED';
+      return `
+        <div class="stack">
+          <div class="subtabs">
+            ${tabs.map(t => `<button class="tab-btn ${batch.tab === t ? 'active' : ''}" data-action="switch-batch-tab" data-tab="${t}" ${editable ? '' : 'disabled'}>${tabMap[t]}</button>`).join('')}
+          </div>
+          ${renderBatchTab(activity, batch)}
+          <div class="form-actions" style="justify-content:flex-start;">
+            <button class="btn" data-action="save-batch" data-id="${esc(batch.id)}" ${editable ? '' : 'disabled'}>保存预配置</button>
+            <button class="btn" data-action="save-batch-code" data-id="${esc(batch.id)}" ${editable ? '' : 'disabled'}>保存并校验</button>
+            <button class="btn green" data-action="batch-send" data-id="${esc(batch.id)}" ${(batch.status === 'READY' || batch.status === 'AUDITING') && editable ? '' : 'disabled'}>发放</button>
+            <button class="btn" data-action="batch-pause" data-id="${esc(batch.id)}" ${batch.status === 'SENDING' && editable ? '' : 'disabled'}>暂停</button>
+            <button class="btn green" data-action="batch-continue" data-id="${esc(batch.id)}" ${batch.status === 'PAUSED' && editable ? '' : 'disabled'}>继续</button>
+            <button class="btn red" data-action="batch-stop" data-id="${esc(batch.id)}" ${((batch.status === 'SENDING' || batch.status === 'PAUSED') && editable) ? '' : 'disabled'}>失效</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderBatchTab(activity, batch){
+      const editable = activity.status !== 'DEACTIVATED';
+      const tab = batch.tab;
+      const locked = !editable;
+      const fields = {
+        basic: `
+          <div class="form-grid">
+            <div class="field span-6"><label>批次名称<span class="hint">可改</span></label><input data-scope="batch" data-field="name" data-id="${esc(batch.id)}" value="${esc(batch.name)}" ${locked ? 'readonly' : ''} /></div>
+            <div class="field span-6"><label>批次ID<span class="hint">只读</span></label><input readonly value="${esc(batch.id)}" /></div>
+            <div class="field span-6"><label>活动名称<span class="hint">只读</span></label><input readonly value="${esc(activity.name)}" /></div>
+            <div class="field span-6"><label>批次状态<span class="hint">只读</span></label><input readonly value="${esc(batchState(batch.status))}" /></div>
+            <div class="field span-12"><label>备注<span class="hint">可改</span></label><textarea data-scope="batch" data-field="remarks" data-id="${esc(batch.id)}" ${locked ? 'readonly' : ''}>${esc(batch.remarks || '')}</textarea></div>
+          </div>
+        `,
+        date: `
+          <div class="form-grid">
+            <div class="field span-6"><label>发放开始日期<span class="hint">可改</span></label><input type="date" data-scope="batch" data-field="start" data-id="${esc(batch.id)}" value="${esc(batch.start)}" ${locked ? 'readonly' : ''} /></div>
+            <div class="field span-6"><label>发放结束日期<span class="hint">可改</span></label><input type="date" data-scope="batch" data-field="end" data-id="${esc(batch.id)}" value="${esc(batch.end)}" ${locked ? 'readonly' : ''} /></div>
+            <div class="field span-6"><label>可用天数<span class="hint">只读计算</span></label><input readonly value="${daysBetween(batch.start, batch.end)}" /></div>
+            <div class="field span-6"><label>等待天数<span class="hint">仅演示</span></label><input readonly value="0" /></div>
+          </div>
+        `,
+        budget: `
+          <div class="form-grid">
+            <div class="field span-4"><label>总预算<span class="hint">可改</span></label><input type="number" data-scope="batch" data-field="budgetTotal" data-id="${esc(batch.id)}" value="${esc(batch.budgetTotal)}" ${locked ? 'readonly' : ''} /></div>
+            <div class="field span-4"><label>每日预算<span class="hint">可改</span></label><input type="number" data-scope="batch" data-field="dailyBudget" data-id="${esc(batch.id)}" value="${esc(batch.dailyBudget)}" ${locked ? 'readonly' : ''} /></div>
+            <div class="field span-4"><label>每人限制<span class="hint">可改</span></label><input type="number" data-scope="batch" data-field="perUser" data-id="${esc(batch.id)}" value="${esc(batch.perUser)}" ${locked ? 'readonly' : ''} /></div>
+          </div>
+        `,
+        store: `
+          <div class="form-grid">
+            <div class="field span-4"><label>门店范围<span class="hint">只读</span></label><input readonly value="${esc(batch.scope === 'SPECIFIC' ? '指定门店' : '全部门店')}" /></div>
+            <div class="field span-4"><label>已关联门店数<span class="hint">只读</span></label><input readonly value="${esc(batch.storeCount || 0)}" /></div>
+            <div class="field span-12"><label>门店列表<span class="hint">展示</span></label><textarea readonly>${esc((batch.stores || []).join('、') || '—')}</textarea></div>
+          </div>
+        `,
+        code: `
+          <div class="form-grid">
+            <div class="field span-4"><label>券码结果状态<span class="hint">只读</span></label><input readonly value="${esc(batch.codeStatus)}" /></div>
+            <div class="field span-4"><label>券码结果文件<span class="hint">只读</span></label><input readonly value="${esc(batch.codeFile)}" /></div>
+            <div class="field span-4"><label>校验时间<span class="hint">只读</span></label><input readonly value="${esc(batch.codeCheckedAt)}" /></div>
+            <div class="field span-12">
+              <label>券码结果<span class="hint">自动生成 / 回传</span></label>
+              <div class="hint-box info">当前原型仅展示系统自动生成 / 回传后的结果，不提供人工上传入口。</div>
+            </div>
+          </div>
+        `,
+        notify: `
+          <div class="form-grid">
+            <div class="field span-6"><label>通知配置<span class="hint">可改</span></label><select data-scope="batch" data-field="notify" data-id="${esc(batch.id)}" ${locked ? 'disabled' : ''}><option ${batch.notify === '开启微信通知' ? 'selected' : ''}>开启微信通知</option><option ${batch.notify === '关闭' ? 'selected' : ''}>关闭</option></select></div>
+            <div class="field span-12"><label>通知说明<span class="hint">展示</span></label><textarea readonly>批次通知配置将按照页面展示层收集，不接入外部通知系统。</textarea></div>
+          </div>
+        `,
+        control: `
+          <div class="detail-grid">
+            <div class="batch-stat"><div class="k">Code总量</div><div class="v">${esc(batch.codeTotal)}</div><div class="s">批次中已登记的券码总数。</div></div>
+            <div class="batch-stat"><div class="k">可用Code</div><div class="v">${esc(batch.codeAvailable)}</div><div class="s">当前可继续发放的券码数量。</div></div>
+            <div class="batch-stat"><div class="k">已发放量</div><div class="v">${esc(batch.issued)}</div><div class="s">累计已发放的券码数量。</div></div>
+          </div>
+          <div class="section-gap"></div>
+          <div class="hint-box success">
+            <strong>控制说明</strong><br/>
+            发放中可暂停，已暂停可继续。<code>继续</code> 会把批次状态从 <strong>已暂停</strong> 恢复为 <strong>发放中</strong>。
+          </div>
+        `,
+      };
+      return fields[tab] || fields.basic;
+    }
+
+    function daysBetween(start, end){
+      const s = new Date(start);
+      const e = new Date(end);
+      if (Number.isNaN(s.getTime()) || Number.isNaN(e.getTime())) return '—';
+      return Math.max(0, Math.ceil((e - s) / (1000*60*60*24)) + 1);
+    }
+
+    function renderModal(){
+      const m = appState.modal;
+      if (!m) return '';
+      return `
+        <div class="modal-panel">
+          <div class="modal-hd">
+            <div>
+              <h3>${esc(m.title)}</h3>
+              <p>${esc(m.body)}</p>
+            </div>
+          </div>
+          <div class="modal-bd">
+            ${m.extra || ''}
+          </div>
+          <div class="modal-actions">
+            ${m.buttons.map(btn => `<button class="btn ${btn.kind || 'ghost'}" data-action="${btn.action}">${esc(btn.text)}</button>`).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function bindDynamic(){
+      document.querySelectorAll('[data-page]').forEach(btn => btn.onclick = () => setPage(btn.dataset.page));
+      document.querySelectorAll('[data-action]').forEach(el => {
+        if (el.dataset.bound) return;
+        el.dataset.bound = '1';
+        el.addEventListener('click', handleAction);
+      });
+      document.querySelectorAll('input[data-scope], textarea[data-scope], select[data-scope]').forEach(input => {
+        input.oninput = onFieldChange;
+        input.onchange = onFieldChange;
+      });
+      document.querySelectorAll('input[type="file"][data-file-scope]').forEach(input => {
+        input.onchange = onFileChange;
+      });
+    }
+
+    function onFieldChange(e){
+      const el = e.target;
+      const scope = el.dataset.scope;
+      const field = el.dataset.field;
+      const id = el.dataset.id;
+      const value = el.type === 'number' ? el.value : el.value;
+      if (scope === 'filter') {
+        appState.filters[field] = value;
+        return;
+      }
+      if (scope === 'add') {
+        updateAddDraft(field, value);
+        appState.dirty.add = true;
+        render();
+        return;
+      }
+      if (scope === 'edit') {
+        updateEditDraft(field, value);
+        appState.dirty.edit = true;
+        render();
+        return;
+      }
+      if (scope === 'modify') {
+        updateModifyDraft(el.dataset.zone, field, value);
+        appState.dirty.modify = true;
+        render();
+        return;
+      }
+      if (scope === 'batch' && id) {
+        updateBatchField(id, field, value);
+        appState.dirty.batch = true;
+        render();
+      }
+    }
+
+    function onFileChange(e){
+      const el = e.target;
+      const scope = el.dataset.fileScope;
+      const field = el.dataset.field;
+      const files = Array.from(el.files || []);
+      if (!files.length) return;
+      const urlList = files.map(file => URL.createObjectURL(file));
+      if (scope === 'add') {
+        if (field === 'details') {
+          appState.add.details = urlList.slice(0, 8);
+        } else {
+          appState.add[field] = urlList[0];
+        }
+        appState.dirty.add = true;
+      } else if (scope === 'modify') {
+        appState.modify.supplement.details = urlList.slice(0, 8);
+        appState.dirty.modify = true;
+      }
+      render();
+    }
+
+    function updateAddDraft(field, value){
+      if (field === 'couponType') return;
+      if (field === 'batchReadyCount') {
+        appState.add.batchReadyCount = Number(value || 0);
+        return;
+      }
+      if (field === 'comboName' || field === 'comboQuantity' || field === 'productName' || field === 'productPrice' || field === 'productCount' || field === 'productAppid' || field === 'productPath') {
+        return; // handled separately via action targeting to keep render simpler
+      }
+      appState.add[field] = value;
+    }
+    function updateEditDraft(field, value){
+      if (!appState.edit) appState.edit = clone(currentActivity());
+      if (field === 'batchReadyCount') {
+        appState.edit.batchReadyCount = Number(value || 0);
+        return;
+      }
+      appState.edit[field] = value;
+    }
+    function updateModifyDraft(zone, field, value){
+      if (zone === 'main') appState.modify.main[field] = value;
+      if (zone === 'supplement') appState.modify.supplement[field] = value;
+    }
+    function updateBatchField(id, field, value){
+      const a = currentActivity();
+      const batch = a.batches.find(b => b.id === id);
+      if (!batch) return;
+      batch[field] = value;
+    }
+
+    function handleAction(e){
+      const el = e.currentTarget;
+      const action = el.dataset.action;
+      const id = el.dataset.id;
+      const tab = el.dataset.tab;
+      const type = el.dataset.type;
+      const scope = el.dataset.scope;
+      const idx = Number(el.dataset.index);
+      const pIdx = Number(el.dataset.product);
+
+      if (action === 'go-list') return setPage('list');
+      if (action === 'refresh-current') return render();
+      if (action === 'reset-filters') {
+        appState.filters = { name:'', id:'', extId:'', status:'', type:'' };
+        return render();
+      }
+      if (action === 'apply-filters') return render();
+      if (action === 'go-add') {
+        appState.add = initAddDraft('discount');
+        appState.dirty.add = false;
+        return setPage('add');
+      }
+      if (action === 'add-back-list' || action === 'back-list') return setPage('list');
+      if (action === 'back-detail' || action === 'edit-back-detail') return setPage('detail', { activityId: currentActivity().id });
+      if (action === 'add-reset') {
+        appState.add = initAddDraft('discount');
+        appState.dirty.add = false;
+        return render();
+      }
+      if (action === 'choose-type') {
+        appState.add.couponType = type;
+        if (type === 'exchange' && !appState.add.combos.length) appState.add.combos = [blankCombo()];
+        if (type === 'discount') appState.add.combos = [];
+        appState.dirty.add = true;
+        return render();
+      }
+      if (action === 'add-back-type' || action === 'add-return-type') return render();
+      if (action === 'add-cancel') {
+        if (appState.dirty.add) {
+          confirmDialog('放弃未保存内容？', '当前新增表单已有未保存内容，确认后将返回列表并丢弃本次输入。').then(ok => {
+            if (ok) {
+              appState.add = initAddDraft('discount');
+              appState.dirty.add = false;
+              setPage('list');
+            }
+          });
+          return;
+        }
+        appState.add = initAddDraft('discount');
+        return setPage('list');
+      }
+      if (action === 'edit-cancel') {
+        if (appState.dirty.edit) {
+          confirmDialog('放弃未保存内容？', '当前编辑页已有未保存修改，确认后将丢弃当前内容并返回详情页。').then(ok => {
+            if (ok) {
+              appState.edit = null;
+              appState.dirty.edit = false;
+              setPage('detail', { activityId: currentActivity().id });
+            }
+          });
+          return;
+        }
+        appState.edit = null;
+        return setPage('detail', { activityId: currentActivity().id });
+      }
+      if (action === 'modify-cancel') {
+        if (appState.dirty.modify) {
+          confirmDialog('放弃未保存修改？', '当前活动修改页存在未保存内容，确认后将丢弃。').then(ok => {
+            if (ok) {
+              appState.modify = null;
+              appState.dirty.modify = false;
+              setPage('detail', { activityId: currentActivity().id });
+            }
+          });
+          return;
+        }
+        appState.modify = null;
+        return setPage('detail', { activityId: currentActivity().id });
+      }
+      if (action === 'modify-reset') {
+        appState.modify = null;
+        appState.dirty.modify = false;
+        return render();
+      }
+      if (action === 'save-draft' || action === 'edit-save-draft') {
+        const scopeName = action === 'save-draft' ? 'add' : 'edit';
+        const draft = scopeName === 'add' ? appState.add : appState.edit;
+        const errors = validateActivityDraft(draft, false);
+        if (Object.keys(errors).length) {
+          return showFieldErrors(scopeName, errors, '草稿保存失败');
+        }
+        const activity = scopeName === 'add' ? createActivityFromDraft(draft) : patchActivityFromDraft(currentActivity(), draft);
+        upsertActivity(activity);
+        appState.dirty[scopeName] = false;
+        pushToast('保存草稿成功', `${draft.name || '未命名活动'} 已保存为草稿。`);
+        if (scopeName === 'add') {
+          appState.add = initAddDraft(draft.couponType || 'discount');
+          setPage('detail', { activityId: activity.id });
+        } else {
+          appState.edit = clone(activity);
+          setPage('detail', { activityId: activity.id });
+        }
+        return;
+      }
+      if (action === 'submit-review' || action === 'edit-submit-review') {
+        const scopeName = action === 'submit-review' ? 'add' : 'edit';
+        const draft = scopeName === 'add' ? appState.add : appState.edit;
+        const errors = validateActivityDraft(draft, true);
+        if (Object.keys(errors).length) {
+          return showFieldErrors(scopeName, errors, '提交审核失败');
+        }
+        const activity = scopeName === 'add' ? createActivityFromDraft(draft) : patchActivityFromDraft(currentActivity(), draft);
+        activity.status = 'AUDITING';
+        activity.updatedAt = stamp();
+        upsertActivity(activity);
+        appState.dirty[scopeName] = false;
+        pushToast('提交审核成功', `${activity.name} 已进入审批中。`);
+        appState.add = initAddDraft('discount');
+        appState.edit = clone(activity);
+        return setPage('detail', { activityId: activity.id });
+      }
+      if (action === 'open-detail') return setPage('detail', { activityId: id });
+      if (action === 'open-edit') {
+        const act = findActivity(id);
+        if (!act || !allowedEdit(act)) return pushToast('无法进入编辑页', '仅草稿活动可进入编辑页。');
+        appState.edit = clone(act);
+        appState.dirty.edit = false;
+        return setPage('edit', { activityId: id });
+      }
+      if (action === 'open-modify') {
+        const act = findActivity(id);
+        if (!act || !allowedModify(act)) return pushToast('无法进入修改页', '仅生效中活动可进入修改页。');
+        appState.modify = null;
+        appState.dirty.modify = false;
+        return setPage('modify', { activityId: id });
+      }
+      if (action === 'open-batch') {
+        const act = findActivity(id);
+        if (!act || !allowedBatch(act)) return pushToast('无法进入批次管理页', '当前状态不允许进入批次管理页。');
+        const first = act.batches[0];
+        if (first) appState.selectedBatchId = first.id;
+        return setPage('batch', { activityId: id, batchId: first ? first.id : null });
+      }
+      if (action === 'invalidate-activity') {
+        const act = findActivity(id);
+        if (!act || !allowedInvalidate(act)) return;
+        confirmDialog('确认失效活动？', `失效后，活动将进入已失效状态，所有批次也会被同步标记为已失效。`).then(ok => {
+          if (!ok) return;
+          act.status = 'DEACTIVATED';
+          act.modifier = '系统';
+          act.updatedAt = stamp();
+          act.batches.forEach(b => b.status = 'DEACTIVATED');
+          appState.selectedActivityId = act.id;
+          appState.selectedBatchId = act.batches[0]?.id || null;
+          pushToast('活动已失效', `${act.name} 已标记为已失效。`);
+          setPage('detail', { activityId: act.id });
+        });
+        return;
+      }
+      if (action === 'batch-new') {
+        const act = currentActivity();
+        if (!editableState(act)) return pushToast('无法新建批次', '当前状态不允许新建批次。');
+        const newBatch = {
+          id: uid('B-'),
+          name: `新建批次-${act.batches.length + 1}`,
+          status: 'READY',
+          start: todayISO(),
+          end: tomorrowISO(7),
+          codeTotal: 1000,
+          codeAvailable: 1000,
+          issued: 0,
+          scope: 'ALL',
+          budgetTotal: 5000,
+          dailyBudget: 500,
+          perUser: 1,
+          storeCount: 0,
+          stores: [],
+          notify: '关闭',
+          codeStatus: '待校验',
+          codeFile: '系统自动生成',
+          codeCheckedAt: '—',
+          remarks: '',
+          tab: 'basic',
+        };
+        act.batches.unshift(newBatch);
+        appState.selectedBatchId = newBatch.id;
+        pushToast('已新建批次', '可以继续配置预配置、预算、门店和券码结果。');
+        return render();
+      }
+      if (action === 'select-batch') {
+        appState.selectedBatchId = id;
+        const act = currentActivity();
+        const batch = act.batches.find(b => b.id === id);
+        if (batch) batch.tab = batch.tab || 'basic';
+        return render();
+      }
+      if (action === 'switch-batch-tab') {
+        const act = currentActivity();
+        const batch = act.batches.find(b => b.id === appState.selectedBatchId);
+        if (batch) batch.tab = tab;
+        return render();
+      }
+      if (action === 'save-batch') {
+        const act = currentActivity();
+        const batch = currentBatch();
+        if (!batch || !editableState(act)) return;
+        batch.remarks = batch.remarks || '';
+        batch.status = batch.status === 'DEACTIVATED' ? 'DEACTIVATED' : batch.status;
+        batch.codeFile = batch.codeFile || 'system-generated-codes.xlsx';
+        pushToast('保存预配置成功', `${batch.name} 已保存。`);
+        return render();
+      }
+      if (action === 'save-batch-code') {
+        const act = currentActivity();
+        const batch = currentBatch();
+        if (!batch || !editableState(act)) return;
+        batch.codeStatus = '已校验';
+        batch.codeFile = batch.codeFile === '—' ? 'system-generated-codes.xlsx' : batch.codeFile;
+        batch.codeCheckedAt = stamp();
+        pushToast('保存并校验成功', `${batch.name} 的券码结果已自动生成 / 回传并完成校验。`);
+        return render();
+      }
+      if (action === 'batch-edit-basic' || action === 'batch-edit-budget' || action === 'batch-edit-store') {
+        const act = currentActivity();
+        const batch = act.batches.find(x => x.id === id);
+        if (!batch || !editableState(act)) return;
+        appState.selectedBatchId = id;
+        batch.tab = action === 'batch-edit-basic' ? 'basic' : action === 'batch-edit-budget' ? 'budget' : 'store';
+        setPage('batch', { activityId: act.id, batchId: id });
+        return;
+      }
+      if (action === 'batch-send') {
+        const act = currentActivity();
+        const batch = findBatch(id);
+        if (!batch || !editableState(act)) return;
+        if (!(batch.status === 'READY' || batch.status === 'AUDITING' || batch.status === 'PAUSED')) return;
+        batch.status = 'SENDING';
+        batch.codeStatus = '已校验';
+        batch.codeCheckedAt = batch.codeCheckedAt === '—' ? stamp() : batch.codeCheckedAt;
+        act.modifier = '系统';
+        act.updatedAt = stamp();
+        appState.selectedBatchId = batch.id;
+        pushToast('已开始发放', `${batch.name} 进入发放中。`);
+        return render();
+      }
+      if (action === 'batch-pause') {
+        const act = currentActivity();
+        const batch = findBatch(id);
+        if (!batch || !editableState(act)) return;
+        if (batch.status !== 'SENDING') return;
+        batch.status = 'PAUSED';
+        act.updatedAt = stamp();
+        appState.selectedBatchId = batch.id;
+        pushToast('已暂停发放', `${batch.name} 已切换为已暂停。`);
+        return render();
+      }
+      if (action === 'batch-continue') {
+        const act = currentActivity();
+        const batch = findBatch(id);
+        if (!batch || !editableState(act)) return;
+        if (batch.status !== 'PAUSED') return;
+        batch.status = 'SENDING';
+        act.updatedAt = stamp();
+        appState.selectedBatchId = batch.id;
+        pushToast('已继续发放', `${batch.name} 已恢复为发放中。`);
+        return render();
+      }
+      if (action === 'batch-stop') {
+        const act = currentActivity();
+        const batch = findBatch(id);
+        if (!batch || !editableState(act)) return;
+        if (!(batch.status === 'SENDING' || batch.status === 'PAUSED')) return;
+        confirmDialog('确认失效批次？', `失效后，批次将停止发放并标记为已失效。`).then(ok => {
+          if (!ok) return;
+          batch.status = 'DEACTIVATED';
+          act.updatedAt = stamp();
+          appState.selectedBatchId = batch.id;
+          pushToast('批次已失效', `${batch.name} 已标记为已失效。`);
+          render();
+        });
+        return;
+      }
+      if (action === 'batch-return-list' || action === 'back-list') return setPage('list');
+      if (action === 'modal-cancel') return closeModal();
+      if (action === 'modal-ok' && appState.confirmResolve) {
+        const resolve = appState.confirmResolve;
+        appState.confirmResolve = null;
+        resolve(true);
+        closeModal();
+        return;
+      }
+      if (action === 'modal-no') {
+        if (appState.confirmResolve) {
+          const resolve = appState.confirmResolve;
+          appState.confirmResolve = null;
+          resolve(false);
+        }
+        closeModal();
+        return;
+      }
+      if (action === 'save-cancel') return closeModal();
+      if (action === 'modify-save') {
+        const act = currentActivity();
+        if (!allowedModify(act)) return;
+        const m = currentModifyDraft();
+        act.title = m.main.title.trim();
+        act.subtitle = m.main.subtitle.trim();
+        act.productImage = m.main.image || act.productImage;
+        act.backgroundImage = m.main.bg || act.backgroundImage;
+        act.ruleSummary = m.supplement.ruleSummary.trim();
+        if (m.supplement.details && m.supplement.details.length) act.details = m.supplement.details.slice(0, 8);
+        act.modifier = '原型用户';
+        act.updatedAt = stamp();
+        appState.dirty.modify = false;
+        appState.modify = null;
+        pushToast('修改已保存', `${act.name} 的展示修正已更新。`);
+        return setPage('detail', { activityId: act.id });
+      }
+      if (action === 'save-batch-code') return;
+      if (action === 'choose-type') {
+        appState.currentNewType = type;
+        return render();
+      }
+      if (action === 'add-combo' || action === 'remove-combo' || action === 'add-product' || action === 'remove-product') {
+        handleComboActions(action, scope, idx, pIdx);
+        return render();
+      }
+    }
+
+    function handleComboActions(action, scope, comboIndex, productIndex){
+      const draft = scope === 'add' ? appState.add : appState.edit;
+      if (!draft.combos || !draft.combos.length) draft.combos = [blankCombo()];
+      if (action === 'add-combo') {
+        draft.combos.push(blankCombo());
+        return;
+      }
+      if (action === 'remove-combo') {
+        if (draft.combos.length <= 1) return;
+        draft.combos.splice(comboIndex, 1);
+        return;
+      }
+      const combo = draft.combos[comboIndex];
+      if (!combo) return;
+      if (action === 'add-product') {
+        combo.products.push({ name:'', price:'', count:1, image:'', appid:'', path:'' });
+        return;
+      }
+      if (action === 'remove-product') {
+        if (combo.products.length <= 1) return;
+        combo.products.splice(productIndex, 1);
+      }
+    }
+
+    function editableState(a){
+      return a && a.status !== 'DEACTIVATED';
+    }
+
+    function validateActivityDraft(draft, submit){
+      const errors = {};
+      if (!draft.name || !draft.name.trim()) errors.name = '请填写商品券名称';
+      if (!draft.extId || !draft.extId.trim()) errors.extId = '请填写外部商品ID';
+      if (!draft.title || !draft.title.trim()) errors.title = '请填写商品券标题文案';
+      if (!draft.ruleSummary || !draft.ruleSummary.trim()) errors.ruleSummary = '请填写规则摘要';
+      if (draft.couponType === 'discount') {
+        if (draft.threshold === '' || draft.threshold === null) errors.threshold = '请填写门槛金额';
+        if (draft.discount === '' || draft.discount === null) errors.discount = '请填写减免金额';
+        if (Number(draft.discount) > Number(draft.threshold || 0)) errors.discount = '减免金额不能大于门槛金额';
+      }
+      if (draft.couponType === 'exchange') {
+        if (!draft.price && draft.price !== 0) errors.price = '请填写商品原价';
+        const comboOk = draft.combos && draft.combos.some(c => c.name && c.products && c.products.some(p => p.name));
+        if (!comboOk) errors.combos = '请至少配置 1 个有效商品组合';
+      }
+      const readyCount = Number(draft.batchReadyCount || 0);
+      if (submit && readyCount < 1) errors.batchReadyCount = '提交审核至少需要 1 个已完成预配置且通过校验的批次';
+      return errors;
+    }
+
+    function showFieldErrors(scope, errors, title){
+      const scopeErrors = Object.entries(errors).map(([k, v]) => `${k}: ${v}`).join('；');
+      pushToast(title, scopeErrors || '存在未通过的校验项。');
+    }
+
+    function createActivityFromDraft(draft){
+      const a = {
+        id: uid('ACT-'),
+        name: draft.name.trim(),
+        extId: draft.extId.trim(),
+        couponType: draft.couponType,
+        typeName: typeLabel[draft.couponType],
+        status: 'DRAFT',
+        scope: '全部门店',
+        creator: '原型用户',
+        modifier: '原型用户',
+        createdAt: stamp(),
+        updatedAt: stamp(),
+        useMode: 'SINGLE',
+        codeMode: 'UPLOAD',
+        productImage: draft.image || svgArt('NEW', '新建活动', ['#123a4a', '#356b79', '#d76b36']),
+        backgroundImage: draft.bg || svgArt('BG', '活动背景', ['#3b5d7a', '#1f7a57', '#e9c28d']),
+        title: draft.title.trim(),
+        subtitle: draft.subtitle.trim(),
+        ruleSummary: draft.ruleSummary.trim(),
+        threshold: draft.threshold === '' ? '' : Number(draft.threshold),
+        discount: draft.discount === '' ? '' : Number(draft.discount),
+        discountNote: draft.discountNote || '',
+        price: draft.price === '' ? '' : Number(draft.price),
+        combos: clone(draft.combos || []),
+        details: draft.details.length ? draft.details.slice(0, 8) : [svgArt('DETAIL', '详情图', ['#123a4a', '#356b79', '#d76b36'])],
+        batches: draft.batchReadyCount > 0 ? Array.from({ length: draft.batchReadyCount }).map((_, i) => ({
+          id: uid('B-'),
+          name: `草稿批次-${i + 1}`,
+          status: 'READY',
+          start: todayISO(),
+          end: tomorrowISO(10),
+          codeTotal: 1000,
+          codeAvailable: 1000,
+          issued: 0,
+          scope: 'ALL',
+          budgetTotal: 5000,
+          dailyBudget: 500,
+          perUser: 1,
+          storeCount: 0,
+          stores: [],
+          notify: '关闭',
+          codeStatus: '待校验',
+          codeFile: '系统自动生成',
+          codeCheckedAt: '—',
+          remarks: '',
+          tab: 'basic',
+        })) : [],
+      };
+      return a;
+    }
+
+    function patchActivityFromDraft(activity, draft){
+      const next = clone(activity);
+      next.name = draft.name.trim();
+      next.extId = draft.extId.trim();
+      next.couponType = draft.couponType;
+      next.typeName = typeLabel[draft.couponType];
+      next.productImage = draft.image || next.productImage;
+      next.backgroundImage = draft.bg || next.backgroundImage;
+      next.title = draft.title.trim();
+      next.subtitle = draft.subtitle.trim();
+      next.ruleSummary = draft.ruleSummary.trim();
+      next.threshold = draft.threshold === '' ? '' : Number(draft.threshold);
+      next.discount = draft.discount === '' ? '' : Number(draft.discount);
+      next.discountNote = draft.discountNote || '';
+      next.price = draft.price === '' ? '' : Number(draft.price);
+      next.combos = clone(draft.combos || []);
+      next.updatedAt = stamp();
+      next.modifier = '原型用户';
+      return next;
+    }
+
+    function upsertActivity(activity){
+      const idx = appState.activities.findIndex(a => a.id === activity.id);
+      if (idx >= 0) appState.activities[idx] = activity;
+      else appState.activities.unshift(activity);
+      appState.selectedActivityId = activity.id;
+      if (activity.batches && activity.batches[0]) appState.selectedBatchId = activity.batches[0].id;
+    }
+
+    function findActivity(id){ return appState.activities.find(a => a.id === id); }
+    function findBatch(id){
+      const a = currentActivity();
+      return a?.batches?.find(b => b.id === id);
+    }
+    function stamp(){
+      const d = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+    function todayISO(){
+      const d = new Date();
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+    function tomorrowISO(days){
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      const pad = (n) => String(n).padStart(2, '0');
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && appState.modal) {
+        closeModal();
+      }
+    });
+
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target.id === 'modal') closeModal();
+    });
+
+    // seed current add type
+    appState.currentNewType = 'discount';
+    render();
+  </script>
+</body>
+</html>
+
+

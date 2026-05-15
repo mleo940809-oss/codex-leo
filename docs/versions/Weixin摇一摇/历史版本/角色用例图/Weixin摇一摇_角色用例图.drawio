@@ -1,0 +1,109 @@
+<mxfile host="app.diagrams.net" modified="2026-05-11T11:12:00.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="weixin-usecase" name="角色用例图">
+    <mxGraphModel dx="1800" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1800" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="产品经理" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="120" width="160" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="3" value="运营人员" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="240" width="160" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="4" value="审核/管理角色" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="35" y="360" width="190" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="5" value="执行角色" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="480" width="160" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="6" value="门店/区域协同角色" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="25" y="600" width="210" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="7" value="活动管理（活动层能力）" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;dashed=1;dashPattern=6 6;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="380" y="40" width="560" height="470" as="geometry"/>
+        </mxCell>
+        <mxCell id="8" value="批次管理（批次执行能力）" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#16a34a;strokeWidth=2;dashed=1;dashPattern=6 6;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="380" y="530" width="560" height="530" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="9" value="活动列表检索" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="80" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="10" value="活动创建" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="150" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="草稿补全" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="220" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="生效前修订" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="290" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="只读详情查看" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="360" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="14" value="活动失效" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#2563eb;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="430" width="220" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="15" value="批次预配置" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#16a34a;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="595" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="16" value="Code上传/校验" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#16a34a;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="665" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="17" value="门店关联" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#16a34a;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="735" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="18" value="发放控制" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#16a34a;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="805" width="220" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="19" value="批次状态管理" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#16a34a;fillColor=#ffffff;fontSize=18;align=center;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="610" y="875" width="220" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="20" value="" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;" edge="1" parent="1" source="2" target="9">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;" edge="1" parent="1" source="2" target="10">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="22" value="" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;" edge="1" parent="1" source="3" target="11">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="23" value="" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;" edge="1" parent="1" source="2" target="12">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="24" value="" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;" edge="1" parent="1" source="3" target="13">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="25" value="" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;" edge="1" parent="1" source="4" target="14">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="26" value="" style="endArrow=block;html=1;strokeColor=#16a34a;strokeWidth=2;" edge="1" parent="1" source="5" target="15">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="27" value="" style="endArrow=block;html=1;strokeColor=#16a34a;strokeWidth=2;" edge="1" parent="1" source="5" target="16">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="28" value="" style="endArrow=block;html=1;strokeColor=#16a34a;strokeWidth=2;" edge="1" parent="1" source="6" target="17">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="29" value="" style="endArrow=block;html=1;strokeColor=#16a34a;strokeWidth=2;" edge="1" parent="1" source="5" target="18">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="30" value="" style="endArrow=block;html=1;strokeColor=#16a34a;strokeWidth=2;" edge="1" parent="1" source="4" target="19">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="31" value="活动管理仅覆盖活动层职责范围" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontColor=#1d4ed8;" vertex="1" parent="1">
+          <mxGeometry x="960" y="455" width="260" height="28" as="geometry"/>
+        </mxCell>
+        <mxCell id="32" value="批次管理仅覆盖批次执行职责范围" style="text;html=1;align=center;verticalAlign=middle;fontSize=15;fontColor=#166534;" vertex="1" parent="1">
+          <mxGeometry x="955" y="1010" width="270" height="28" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

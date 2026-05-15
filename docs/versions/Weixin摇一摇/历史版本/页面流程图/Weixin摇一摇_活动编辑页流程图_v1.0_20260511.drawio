@@ -1,0 +1,111 @@
+﻿<mxfile host="app.diagrams.net" modified="2026-05-11T22:12:00.000Z" agent="Codex" version="24.7.17" type="device">
+  <diagram id="weixin-activity-edit-flow" name="活动编辑页流程图">
+    <mxGraphModel dx="1840" dy="1240" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1840" pageHeight="1240" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="2" value="2.1.3 活动编辑页 - 页面主流程图（最终版）" style="text;html=1;align=center;verticalAlign=middle;fontSize=34;fontStyle=1;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="360" y="20" width="1120" height="60" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="10" value="1 入口来源&#xa;进入活动编辑页的来源" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=top;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="30" y="110" width="300" height="420" as="geometry"/>
+        </mxCell>
+        <mxCell id="11" value="活动列表页&#xa;点击【编辑】" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="50" y="180" width="260" height="90" as="geometry"/>
+        </mxCell>
+        <mxCell id="12" value="活动新增页&#xa;草稿恢复后&#xa;跳转编辑页" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="50" y="290" width="260" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="13" value="活动详情页&#xa;点击【编辑】" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="50" y="415" width="260" height="90" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="20" value="2 当前活动状态&#xa;是否允许编辑？" style="rhombus;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="430" y="230" width="240" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="21" value="允许编辑的状态&#xa;草稿 / 审核中&#xa;且未进入执行阶段" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#16a34a;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;fontColor=#166534;" vertex="1" parent="1">
+          <mxGeometry x="690" y="210" width="320" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="22" value="不允许编辑的状态&#xa;生效中 / 已失效&#xa;仅提示只读说明" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#ef4444;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;fontColor=#dc2626;" vertex="1" parent="1">
+          <mxGeometry x="430" y="430" width="320" height="150" as="geometry"/>
+        </mxCell>
+        <mxCell id="23" value="仅展示只读提示&#xa;不可编辑任何内容&#xa;操作入口不可用" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#ef4444;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#dc2626;dashed=1;dashPattern=6 6;" vertex="1" parent="1">
+          <mxGeometry x="430" y="610" width="320" height="120" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="30" value="3 活动编辑页（可编辑）&#xa;券类型已锁定，不可切换" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=top;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="780" y="110" width="520" height="390" as="geometry"/>
+        </mxCell>
+        <mxCell id="31" value="基础信息区（只读）&#xa;商品券ID / 商品券类型 / 使用模式" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="805" y="170" width="470" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="32" value="公共字段区（可编辑）&#xa;活动基础展示信息（名称、时间、说明、规则等）" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="805" y="275" width="470" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="33" value="券型差异区（可编辑）&#xa;满减券 / 兑换券专属字段" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="805" y="385" width="470" height="95" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="40" value="4 补全或修订可编辑字段&#xa;完整或修改活动信息" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#16a34a;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;fontColor=#166534;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="170" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="50" value="5 系统校验&#xa;• 字段格式校验&#xa;• 组合关系校验&#xa;• 状态条件校验" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=left;verticalAlign=top;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="305" width="360" height="165" as="geometry"/>
+        </mxCell>
+        <mxCell id="51" value="校验不通过&#xa;提示错误并定位字段" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#ef4444;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#dc2626;" vertex="1" parent="1">
+          <mxGeometry x="1315" y="515" width="300" height="95" as="geometry"/>
+        </mxCell>
+        <mxCell id="60" value="6 保存修改&#xa;保存当前修改内容" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#16a34a;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;fontColor=#166534;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="560" width="360" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="61" value="7 保存成功&#xa;• 返回活动编辑页&#xa;• 保留在生效前修订链路&#xa;• 不直接进入批次执行链路" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#16a34a;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=left;verticalAlign=top;fontColor=#166534;dashed=1;dashPattern=6 6;" vertex="1" parent="1">
+          <mxGeometry x="1340" y="690" width="360" height="160" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="70" value="8 取消&#xa;点击【取消】或关闭页面" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#7c3aed;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;fontColor=#5b21b6;" vertex="1" parent="1">
+          <mxGeometry x="840" y="560" width="280" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="71" value="存在未保存的修改内容？" style="rhombus;whiteSpace=wrap;html=1;strokeColor=#7c3aed;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=20;fontStyle=1;align=center;verticalAlign=middle;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="560" width="260" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="72" value="二次确认弹窗&#xa;放弃当前修改并离开页面？" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#7c3aed;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#5b21b6;dashed=1;dashPattern=6 6;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="740" width="320" height="105" as="geometry"/>
+        </mxCell>
+        <mxCell id="73" value="直接返回来源页" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#16a34a;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=center;verticalAlign=middle;fontColor=#166534;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="740" width="240" height="105" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="80" value="说明（重要）&#xa;• 活动编辑页是草稿完成与生效前修订的唯一继续入口。&#xa;• 若活动已进入执行阶段（生效中）或已失效，则不允许编辑。&#xa;• 编辑页不处理 Code 上传、门店关联和批次执行控制。&#xa;• 活动状态变更（如失效）需回到活动详情页或列表页执行。" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#3b82f6;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=16;fontStyle=1;align=left;verticalAlign=top;fontColor=#111827;dashed=1;dashPattern=6 6;" vertex="1" parent="1">
+          <mxGeometry x="40" y="850" width="840" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="81" value="编辑页不承接范围&#xa;✕ Code 上传 / 校验&#xa;✕ 门店关联 / 配置&#xa;✕ 批次执行 / 发放" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#3b82f6;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=18;fontStyle=1;align=left;verticalAlign=top;fontColor=#111827;dashed=1;dashPattern=6 6;" vertex="1" parent="1">
+          <mxGeometry x="910" y="850" width="430" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="82" value="图例说明&#xa;蓝色实线：主流程/前进&#xa;蓝色虚线：返回/回流&#xa;绿色：允许/成功&#xa;红色：阻止/不允许&#xa;紫色：返回/确认" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#2563eb;strokeWidth=2;fillColor=#ffffff;arcSize=12;fontSize=16;fontStyle=1;align=left;verticalAlign=top;fontColor=#111827;" vertex="1" parent="1">
+          <mxGeometry x="1370" y="850" width="430" height="220" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="100" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;rounded=0;jettySize=auto;" edge="1" parent="1" source="11" target="20"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="101" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;rounded=0;jettySize=auto;" edge="1" parent="1" source="12" target="20"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="102" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;rounded=0;jettySize=auto;" edge="1" parent="1" source="13" target="20"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="103" value="允许编辑" style="endArrow=block;html=1;strokeColor=#16a34a;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#166534;" edge="1" parent="1" source="20" target="21"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="104" value="禁止编辑" style="endArrow=block;html=1;strokeColor=#ef4444;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#dc2626;" edge="1" parent="1" source="20" target="22"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="105" value="继续编辑" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;rounded=0;jettySize=auto;" edge="1" parent="1" source="21" target="30"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="106" value="进入只读提示" style="endArrow=block;html=1;strokeColor=#ef4444;strokeWidth=2;rounded=0;jettySize=auto;" edge="1" parent="1" source="22" target="23"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="107" value="编辑完成" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;rounded=0;jettySize=auto;" edge="1" parent="1" source="30" target="40"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="108" value="校验" style="endArrow=block;html=1;strokeColor=#2563eb;strokeWidth=2;rounded=0;jettySize=auto;" edge="1" parent="1" source="40" target="50"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="109" value="不通过" style="endArrow=block;html=1;strokeColor=#ef4444;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#dc2626;" edge="1" parent="1" source="50" target="51"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="110" value="通过" style="endArrow=block;html=1;strokeColor=#16a34a;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#166534;" edge="1" parent="1" source="50" target="60"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="111" value="成功" style="endArrow=block;html=1;strokeColor=#16a34a;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#166534;" edge="1" parent="1" source="60" target="61"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="112" value="取消" style="endArrow=block;html=1;strokeColor=#7c3aed;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#5b21b6;" edge="1" parent="1" source="30" target="70"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="113" value="检查未保存变更" style="endArrow=block;html=1;strokeColor=#7c3aed;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#5b21b6;" edge="1" parent="1" source="70" target="71"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="114" value="有变更" style="endArrow=block;html=1;strokeColor=#7c3aed;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#dc2626;" edge="1" parent="1" source="71" target="72"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="115" value="无变更" style="endArrow=block;html=1;strokeColor=#16a34a;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#166534;" edge="1" parent="1" source="71" target="73"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="116" value="放弃修改" style="endArrow=block;html=1;strokeColor=#7c3aed;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#5b21b6;" edge="1" parent="1" source="72" target="73"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="120" value="状态阻断" style="endArrow=block;html=1;strokeColor=#ef4444;strokeWidth=2;rounded=0;jettySize=auto;fontColor=#dc2626;" edge="1" parent="1" source="23" target="80"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -198,13 +198,13 @@ Weixin摇一摇用于承载商品券活动的创建、查看、修订和批次�
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_角色用例图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图_v1.5_20260511.png) | [Weixin摇一摇_角色用例图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图.drawio) | 产品经理、运营人员、审核/管理角色、执行角色、门店/区域协同角色与活动/批次能力的角色边界 |
+| [Weixin摇一摇_活动列表页角色用例图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动列表页角色用例图_v1.0_20260511.png) | [Weixin摇一摇_活动列表页角色用例图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动列表页角色用例图_v1.0_20260511.drawio) | 围绕活动列表页的查看、编辑、修改、批次管理、失效入口分发与状态驱动关系 |
 
 ###### 2.1.1.2.2 产品流程图
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_整体流程图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图_v1.5_20260511.png) | [Weixin摇一摇_整体流程图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图.drawio) | 列表页到新增、编辑、修改、详情、批次管理及失效确认的主流程与状态判断 |
+| [Weixin摇一摇_活动列表页流程图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动列表页流程图_v1.0_20260511.png) | [Weixin摇一摇_活动列表页流程图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动列表页流程图_v1.0_20260511.drawio) | 活动列表页主流程、状态分支、失效二次确认与返回刷新规则 |
 
 ##### 2.1.1.3 前置条件
 
@@ -345,13 +345,13 @@ Weixin摇一摇用于承载商品券活动的创建、查看、修订和批次�
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_角色用例图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图_v1.5_20260511.png) | [Weixin摇一摇_角色用例图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图.drawio) | 运营人员在新增页完成首次创建、保存草稿、提交审核的角色边界 |
+| [Weixin摇一摇_活动新增页角色用例图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动新增页角色用例图_v1.0_20260511.png) | [Weixin摇一摇_活动新增页角色用例图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动新增页角色用例图_v1.0_20260511.drawio) | 运营人员围绕活动新增页完成券类型选择、表单创建、草稿保存、提交审核，以及已有草稿时跳转编辑页的角色边界 |
 
 ###### 2.1.2.2.2 产品流程图
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_整体流程图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图_v1.5_20260511.png) | [Weixin摇一摇_整体流程图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图.drawio) | 券类型选择、创建表单填写、草稿保存、提交审核、返回详情与已有草稿跳转编辑页的主流程 |
+| [Weixin摇一摇_活动新增页流程图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动新增页流程图_v1.0_20260511.png) | [Weixin摇一摇_活动新增页流程图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动新增页流程图_v1.0_20260511.drawio) | 券类型选择、创建表单填写、草稿保存、提交审核、返回详情与已有草稿跳转编辑页的主流程 |
 
 ##### 2.1.2.3 前置条件
 
@@ -533,13 +533,13 @@ Weixin摇一摇用于承载商品券活动的创建、查看、修订和批次�
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_角色用例图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图_v1.5_20260511.png) | [Weixin摇一摇_角色用例图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图.drawio) | 运营人员在草稿补全与审核前修订场景中的角色边界 |
+| [Weixin摇一摇_活动编辑页角色用例图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动编辑页角色用例图_v1.0_20260511.png) | [Weixin摇一摇_活动编辑页角色用例图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动编辑页角色用例图_v1.0_20260511.drawio) | 运营人员与审核/管理角色在草稿补全、审核前修订、状态阻断与保存/取消场景中的角色边界 |
 
 ###### 2.1.3.2.2 产品流程图
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_整体流程图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图_v1.5_20260511.png) | [Weixin摇一摇_整体流程图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图.drawio) | 草稿补全、审核前修订、保存修改、取消与状态阻断的主流程 |
+| [Weixin摇一摇_活动编辑页流程图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动编辑页流程图_v1.0_20260511.png) | [Weixin摇一摇_活动编辑页流程图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动编辑页流程图_v1.0_20260511.drawio) | 草稿补全、审核前修订、保存修改、取消与状态阻断的主流程 |
 
 ##### 2.1.3.3 前置条件
 
@@ -709,13 +709,13 @@ Weixin摇一摇用于承载商品券活动的创建、查看、修订和批次�
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_角色用例图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图_v1.5_20260511.png) | [Weixin摇一摇_角色用例图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图.drawio) | 运营人员在生效后低风险修订场景中的角色边界 |
+| [Weixin摇一摇_活动修改页角色用例图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动修改页角色用例图_v1.0_20260511.png) | [Weixin摇一摇_活动修改页角色用例图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动修改页角色用例图_v1.0_20260511.drawio) | 运营人员与审核/管理角色在生效后低风险修订、只读快照与状态阻断场景中的角色边界 |
 
 ###### 2.1.4.2.2 产品流程图
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_整体流程图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图_v1.5_20260511.png) | [Weixin摇一摇_整体流程图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图.drawio) | 生效后低风险修订、保存修改、回流详情页刷新快照、取消与状态阻断的主流程 |
+| [Weixin摇一摇_活动修改页流程图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动修改页流程图_v1.0_20260511.png) | [Weixin摇一摇_活动修改页流程图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动修改页流程图_v1.0_20260511.drawio) | 生效后低风险修订、保存修改、回流详情页刷新快照、取消与状态阻断的主流程 |
 
 ##### 2.1.4.3 前置条件
 
@@ -853,13 +853,13 @@ Weixin摇一摇用于承载商品券活动的创建、查看、修订和批次�
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_角色用例图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图_v1.5_20260511.png) | [Weixin摇一摇_角色用例图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图.drawio) | 运营人员、审核/管理角色在详情页进行只读核对与入口分发的角色边界 |
+| [Weixin摇一摇_活动详情页角色用例图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动详情页角色用例图_v1.0_20260511.png) | [Weixin摇一摇_活动详情页角色用例图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动详情页角色用例图_v1.0_20260511.drawio) | 运营人员、审核/管理角色、执行角色在详情页进行只读核对与入口分发的角色边界 |
 
 ###### 2.1.5.2.2 产品流程图
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_整体流程图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图_v1.5_20260511.png) | [Weixin摇一摇_整体流程图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图.drawio) | 详情页只读快照、批次概览、状态核对、编辑/修改/批次管理入口与失效确认的主流程 |
+| [Weixin摇一摇_活动详情页流程图_v1.0_20260512.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动详情页流程图_v1.0_20260512.png) | [Weixin摇一摇_活动详情页流程图_v1.0_20260512.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_活动详情页流程图_v1.0_20260512.drawio) | 详情页只读快照、批次概览、状态核对、编辑/修改/批次管理入口与失效确认的主流程 |
 
 ##### 2.1.5.3 前置条件
 
@@ -991,13 +991,13 @@ Weixin摇一摇用于承载商品券活动的创建、查看、修订和批次�
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_角色用例图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图_v1.5_20260511.png) | [Weixin摇一摇_角色用例图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_角色用例图.drawio) | 说明活动/批次能力与产品经理、运营、审核管理、执行、门店协同角色的边界关系 |
+| [Weixin摇一摇_批次管理页角色用例图_v1.0_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_批次管理页角色用例图_v1.0_20260511.png) | [Weixin摇一摇_批次管理页角色用例图_v1.0_20260511.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_批次管理页角色用例图_v1.0_20260511.drawio) | 说明批次预配置、资源管理与发放控制能力与产品经理、运营、审核管理、执行、门店协同角色的边界关系 |
 
 ###### 2.1.6.2.2 产品流程图
 
 | 图文件 | 可编辑源文件 | 图示说明 |
 |---|---|---|
-| [Weixin摇一摇_整体流程图_v1.5_20260511.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图_v1.5_20260511.png) | [Weixin摇一摇_整体流程图.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_整体流程图.drawio) | 说明活动进入批次管理页后的创建、预配置、Code 校验、门店关联、发放控制与状态回流主流程 |
+| [Weixin摇一摇_批次管理页流程图_v1.0_20260512.png](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_批次管理页流程图_v1.0_20260512.png) | [Weixin摇一摇_批次管理页流程图_v1.0_20260512.drawio](E:/Codex/New_rules/docs/versions/Weixin摇一摇/Weixin摇一摇_批次管理页流程图_v1.0_20260512.drawio) | 说明活动进入批次管理页后的创建、预配置、Code 校验、门店关联、发放控制与状态回流主流程 |
 
 ##### 2.1.6.3 前置条件
 

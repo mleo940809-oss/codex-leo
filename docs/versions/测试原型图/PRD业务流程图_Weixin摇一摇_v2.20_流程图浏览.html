@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Weixin摇一摇 PRD 业务流程图 v2.20</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+  <style>
+    :root { font-family: "Segoe UI", "Microsoft YaHei", sans-serif; color: #1a1a1a; }
+    body { margin: 0; padding: 24px; background: #f6f7f9; }
+    h1 { font-size: 1.35rem; margin: 0 0 8px; }
+    .meta { color: #555; font-size: 0.9rem; margin-bottom: 24px; }
+    section {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px 16px 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.08);
+    }
+    section h2 { font-size: 1.05rem; margin: 0 0 16px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+    .mermaid { display: flex; justify-content: center; overflow-x: auto; }
+    .hint { font-size: 0.85rem; color: #666; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <h1>Weixin摇一摇 PRD 业务流程图</h1>
+  <p class="meta">来源：<code>PRD业务流程图_Mermaid_Weixin摇一摇_v2.20_20260513.md</code> · 使用 Mermaid 10.6.1（CDN）渲染 · 可用浏览器打印为 PDF</p>
+
+  <section>
+    <h2>流程1：活动与批次端到端主链路</h2>
+    <div class="mermaid">
+flowchart TD
+    A([开始]) --> B[进入活动列表]
+    B --> C{目标动作?}
+    C -->|新增活动| D[券类型选择]
+    C -->|草稿| E[活动编辑或批次管理]
+    C -->|生效中| F[活动修改或批次管理]
+    D --> G[填写活动表单]
+    G --> H[批次管理预配置]
+    H --> I{至少1个批次校验通过?}
+    I -->|否| H
+    I -->|是| J[提交活动审核]
+    J --> K[活动进入审批中]
+    E --> H
+    E --> I
+    F --> L{仅展示修正?}
+    L -->|是| M[保存展示修正]
+    L -->|否| H
+    K --> N{审批结果?}
+    N -->|通过| O[活动生效中]
+    N -->|驳回| P[回到草稿修订]
+    P --> E
+    O --> Q{失效?}
+    Q -->|是并确认| R[活动已失效]
+    Q -->|否| S([结束-维持生效])
+    R --> T([结束])
+    M --> S
+    </div>
+  </section>
+
+  <section>
+    <h2>流程2：活动层页面入口流转</h2>
+    <div class="mermaid">
+flowchart LR
+    subgraph 活动列表
+        L[活动列表页] -->|新增活动| N[活动新增页]
+        L -->|查看 / 点名称| D[活动详情页]
+        L -->|编辑仅草稿| E[活动编辑页]
+        L -->|修改仅生效中| M[活动修改页]
+        L -->|批次管理草稿/生效中| B[批次管理页]
+        L -->|失效仅生效中| L
+    end
+    subgraph 活动详情
+        D -->|返回| L
+        D -->|编辑草稿| E
+        D -->|修改生效中| M
+        D -->|批次管理| B
+    end
+    N -->|提交成功| D
+    E -->|保存/提交后| D
+    M -->|保存修改| D
+    B -->|返回活动详情| D
+    </div>
+  </section>
+
+  <section>
+    <h2>流程3：活动层状态机</h2>
+    <div class="mermaid">
+stateDiagram-v2
+    [*] --> 草稿: 创建活动/保存草稿
+    草稿 --> 审批中: 提交审核通过校验
+    审批中 --> 生效中: 审批通过
+    审批中 --> 草稿: 审批驳回
+    生效中 --> 已失效: 确认失效
+    已失效 --> [*]: 仅只读查看
+    草稿 --> [*]: 业务删除若存在则按实现
+    </div>
+  </section>
+
+  <section>
+    <h2>流程4：批次层状态与过程态</h2>
+    <div class="mermaid">
+stateDiagram-v2
+    [*] --> 预配置编辑: 新建批次/打开抽屉
+    预配置编辑 --> 待提交审核: 保存并校验通过且活动为草稿
+    待提交审核 --> 微信正式状态: 活动已提交审核通过
+    预配置编辑 --> 微信正式状态: 活动非草稿时保存校验通过
+    微信正式状态 --> 发放中: 开始发放
+    发放中 --> 已暂停: 暂停
+    已暂停 --> 发放中: 继续发放
+    发放中 --> 已失效: 失效确认
+    已暂停 --> 已失效: 失效确认
+    发放中 --> 已停止: 自然结束
+    已暂停 --> 已停止: 自然结束
+    已停止 --> [*]: 仅查看
+    已失效 --> [*]: 仅查看
+    </div>
+  </section>
+
+  <section>
+    <h2>流程5：活动新增（两段式）与提交审核</h2>
+    <div class="mermaid">
+flowchart TD
+    subgraph 运营人员
+        A([开始]) --> B[选择券类型]
+        B --> C[填写创建表单]
+        C --> D{保存草稿?}
+        D -->|是| E{满足最小结构?}
+        E -->|否| F[提示补全]
+        F --> C
+        E -->|是| G[草稿保存成功]
+        G --> C
+        D -->|否| H{提交审核?}
+        H -->|否| I{返回未保存?}
+        I -->|是| J[二次确认]
+        J --> C
+        H -->|是| K{字段与批次门禁?}
+    end
+    subgraph 系统
+        K -->|通过| L[活动进入审批中]
+        K -->|否| M[置灰或拦截提示]
+        M --> C
+    end
+    L --> N([跳转活动详情])
+    </div>
+  </section>
+
+  <section>
+    <h2>流程6：活动编辑（草稿续填）与提交审核</h2>
+    <div class="mermaid">
+flowchart TD
+    subgraph 运营人员
+        A([开始]) --> B[进入活动编辑页]
+        B --> C{状态为草稿?}
+        C -->|否| D[阻止或只读]
+        C -->|是| E[补全字段]
+        E --> F{保存草稿?}
+        F -->|是| G{格式与最小信息?}
+        G -->|否| H[提示修正]
+        H --> E
+        G -->|是| I[保存成功]
+        I --> E
+        F -->|否| J{提交审核?}
+        J -->|是| K{活动字段+批次门禁?}
+        J -->|否| L{取消有未保存?}
+        L -->|是| M[二次确认]
+        M --> E
+    end
+    subgraph 系统
+        K -->|通过| N[进入审批中]
+        K -->|否| O[置灰/提示去批次]
+        O --> E
+    end
+    N --> P([返回详情])
+    D --> Q([结束])
+    </div>
+  </section>
+
+  <section>
+    <h2>流程7：活动修改（生效中展示修正）</h2>
+    <div class="mermaid">
+flowchart TD
+    subgraph 运营人员
+        A([开始]) --> B[进入活动修改页]
+        B --> C{状态生效中?}
+        C -->|否| D[阻止或只读]
+        C -->|是| E[编辑展示类字段]
+        E --> F{保存修改?}
+        F -->|是| G{图片与长度校验?}
+        G -->|否| H[提示修正]
+        H --> E
+        G -->|是| I[保存成功]
+        F -->|否| J{取消未保存?}
+        J -->|是| K[二次确认]
+        K --> E
+    end
+    I --> L([返回详情并刷新])
+    D --> M([结束])
+    </div>
+  </section>
+
+  <section>
+    <h2>流程8：活动详情只读与入口分发</h2>
+    <div class="mermaid">
+flowchart TD
+    subgraph 用户
+        A([进入详情]) --> B[加载只读快照]
+        B --> C[核对状态与批次概览]
+        C --> D{点击动作?}
+        D -->|返回| E[回活动列表]
+        D -->|编辑| F{草稿?}
+        F -->|是| G[活动编辑页]
+        F -->|否| H[隐藏或拦截]
+        D -->|修改| I{生效中?}
+        I -->|是| J[活动修改页]
+        I -->|否| H
+        D -->|批次管理| K{草稿或生效中?}
+        K -->|是| L[批次管理页]
+        K -->|否| H
+        D -->|失效| M{生效中?}
+        M -->|是| N[二次确认后失效]
+        M -->|否| H
+    end
+    </div>
+  </section>
+
+  <section>
+    <h2>流程9：批次管理保存校验与券码回传</h2>
+    <div class="mermaid">
+flowchart TD
+    subgraph 运营执行
+        A([打开新增批次]) --> B[分区填写配置]
+        B --> C[点击保存并校验]
+    end
+    subgraph 系统
+        C --> D{表单与联动校验?}
+        D -->|否| E[提示原因保留内容]
+        E --> B
+        D -->|是| F[保存批次配置]
+        F --> G{自动生成回传券码?}
+        G -->|失败| H[提示重试保留配置]
+        H --> B
+        G -->|成功| I[回写状态与列表]
+    end
+    I --> J([刷新批次列表])
+    </div>
+  </section>
+
+  <section>
+    <h2>流程10：活动层与集成侧数据关系</h2>
+    <div class="mermaid">
+flowchart LR
+    subgraph 活动层页面
+        P1[列表/新增/编辑/修改/详情]
+    end
+    subgraph 批次层页面
+        P2[批次管理页]
+    end
+    A[(活动主数据)] -->|活动ID快照| P1
+    A -->|活动上下文| P2
+    B[(批次数据)] --> P2
+    P1 <-->|读写| S1[活动服务]
+    P2 <-->|读写| S2[批次服务]
+    S2 -->|保存并校验| G[券码自动生成回传]
+    G -->|券码结果| B
+    P2 <-->|指定门店| M[门店关联能力]
+    M -->|关联结果| B
+    P2 <-->|通知配置| N[通知配置能力]
+    N -->|配置快照| B
+    S1 --> A
+    S2 --> B
+    P1 -->|关键动作| L[(操作留痕)]
+    P2 -->|关键动作| L
+    </div>
+    <p class="hint">说明：相对原 MD 中 <code>P1 &amp; P2 --&gt; L</code> 写法，此处拆成两条边以兼容更多 Mermaid 版本。</p>
+  </section>
+
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      securityLevel: "loose",
+      flowchart: { htmlLabels: true, curve: "basis", padding: 12 },
+      state: { nodeSpacing: 50, rankSpacing: 50 }
+    });
+  </script>
+</body>
+</html>
