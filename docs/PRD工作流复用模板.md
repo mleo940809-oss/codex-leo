@@ -2,7 +2,7 @@
 
 > 适用于需求受理、需求分析、方案评审、需求冻结、测试交付等流程节点。
 > 这份模板的目标是：让需求内容更容易阅读、检索、复制、评审和自动化校验。
-> 各章节对应的技能路由见 [流程执行技能附录](/E:/Codex/New_rules/docs/流程执行技能附录.md) 的 PRD章节技能路由。
+> 各章节对应的技能路由见 [AI工作流统一执行指引](/E:/Codex/New_rules/docs/AI工作流统一执行指引.md) 的技能路由章节。
 > 本模板定位为前期探索模板；正式评审、冻结与交付阶段请切换到 [standard-prd-template.md](/E:/Codex/New_rules/docs/standard-prd-template.md)。
 
 ## 0. 模板使用规则

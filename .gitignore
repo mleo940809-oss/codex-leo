@@ -1,6 +1,13 @@
 # Generated output
 render_current/
 
+# Local toolchains and generated captures; keep out of Codex/Git scans.
+.tools/
+.figma_capture/
+.review/
+exports/
+_tmp/
+
 # Python cache
 __pycache__/
 *.pyc
